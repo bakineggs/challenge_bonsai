@@ -4,8 +4,8 @@ T:
       Threads:
         Thread:
           K::
-        Env:
-        Holds:
+          Env:
+          Holds:
       Store:
       NextLoc: 1
       Aspect:

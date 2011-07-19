@@ -1,0 +1,80 @@
+# Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
+
+# Reading from the store
+Threads:
+  Thread:
+    K::
+      -VarId: X
+      +Value: V
+    Env:
+      Entry:
+        VarId: X
+        Location: L
+Store:
+  Entry:
+    Location: L
+    Value: V
+
+# Statement Block with variable declaration
+K::
+  -BlockWithSavedEnv:
+    Vars:=
+    Statement:=
+      *:* S
+  +*:* S
+
+K::
+  -Block: B
+  +BlockWithSavedEnv: B
+  +RestoreEnvironment: E
+Env: E
+
+K::
+  -RestoreEnvironment: E
+-Env:
++Env: E
+
+Threads:
+  Thread:
+    K::
+      BlockWithSavedEnv:
+        Vars:
+          -VarId: X
+    Env:
+      !Entry:
+        VarId: X
+      +Entry:
+        VarId: X
+        Location: L
+Store:
+  +Entry:
+    Location: L
+    Value: 0
+-NextLoc: L
++NextLoc: < L + 1
+
+K::
+  BlockWithSavedEnv:
+    Vars:
+      VarId: X
+Env:
+  -Entry:
+    VarId: X
+
+# Side effects: increment
+
+Threads::
+  Thread::
+    K::
+      -Increment:
+        VarId: X
+      +Integer: < V + 1
+    Env:
+      Entry:
+        VarId: X
+        Location: L
+Store:
+  Entry:
+    Location: L
+    -Value: V
+    +Value: < V + 1
