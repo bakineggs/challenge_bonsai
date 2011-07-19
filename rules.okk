@@ -19,7 +19,7 @@ Store:
 K::
   -BlockWithSavedEnv:
     Vars:=
-    Statement:=
+    Body:=
       *:* S
   +*:* S
 
@@ -123,3 +123,156 @@ Threads:
 Ptr:
   -Entry:
     Location: L
+
+# Assignment
+Threads:
+  Thread:
+    K::
+      -Assignment:
+        VarId: X
+        Value: V
+    Env:
+      Entry:
+        VarId: X
+        Location: L
+Store:
+  Entry:
+    Location: L
+    -Value:
+    +Value: V
+
+# Dereferencing Assignment
+Threads:
+  Thread:
+    K::
+      -Assignment:
+        Location: L
+        Value: V
+Store:
+  Entry:
+    Location: L
+    -Value:
+    +Value: V
+
+# Declare aspect
+Threads:
+  Thread:
+    K::
+      -Aspect::=
+        *:* S
+Aspect::=
+  -*:*
+  +*:* S
+
+# Bind aspect to function
+Threads:
+  Thread:
+    K::
+      -LambdaAbstraction:
+        Vars: V
+        Body::=
+          *:* B
+      +Closure:
+        Vars: V
+        Body::
+          *:* S
+          *:* B
+    Env: E
+Aspect::=
+  *:* S
+
+# Function application
+-LambdaApplication:
+  ClosureWithSavedEnv:
+    Vars:=
+    Arguments:=
+    Body:=
+      *:* S
++*:* S
+
+K::
+  -Closure: C
+  +ClosureWithSavedEnv: C
+  +RestoreEnvironment: E
+Env: E
+
+Threads:
+  Thread:
+    K::
+      LambdaApplication:
+        ClosureWithSavedEnv:
+          Vars::
+            -VarId: X
+          Arguments::
+            -Value: V
+    Env:
+      !Entry:
+        VarId: X
+      +Entry:
+        VarId: X
+        Location: L
+Store:
+  +Entry:
+    Location: L
+    Value: V
+-NextLoc: L
++NextLoc: < L + 1
+
+K::
+  LambdaApplication:
+    ClosureWithSavedEnv:
+      Vars:
+        VarId: X
+Env:
+  -Entry:
+    VarId: X
+
+# Tail call optimization
+K::
+  -RestoreEnvironment:
+  RestoreEnvironment:
+
+# Recursion
+Threads:
+  Thread:
+    K::
+      -MuConstructWithSavedEnv:
+        !VarId:
+        Body:
+          *:* S
+      +*:* S
+
+K::
+  -MuConstruct: M
+  +MuConstructWithSavedEnv: M
+  +RestoreEnvironment: E
+Env: E
+
+Threads:
+  Thread:
+    K::
+      MuConstructWithSavedEnv:
+        -VarId: X
+        Body: B
+    Env:
+      !Entry:
+        VarId: X
+      +Entry:
+        VarId: X
+        Location: L
+Store:
+  +Entry:
+    Location: L
+    Value:
+      MuConstruct:
+        VarId: X
+        Body: B
+-NextLoc: L
++NextLoc: < L + 1
+
+K::
+  MuConstructWithSavedEnv:
+    VarId: X
+Env:
+  -Entry:
+    VarId: X
