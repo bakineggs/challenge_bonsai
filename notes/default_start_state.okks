@@ -1,0 +1,22 @@
+T:
+  Agents:
+    Agent:
+      Threads:
+        Thread:
+          K::
+        Env:
+        Holds:
+      Store:
+      NextLoc: 1
+      Aspect:
+      Busy:
+      Me: 1 ???
+      Parent: ???
+      Ptr:
+  Output::
+  Messages:
+  NextAgent: 1
+
+# NOTES:
+# Map{Nat -> Val} will have to be done with a node containing Entry nodes which each contain a Key: K and Value: V node (where K is the key and V is the value). Writing to a map will require a rule to write a value for a key only if an entry doesn't exist for that key and another rule to remove an existing entry when we need to write one for that key.
+# Set{Val} will have to be done with a node containing Value: V nodes (where V is the value).
