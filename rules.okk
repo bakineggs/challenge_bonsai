@@ -62,9 +62,8 @@ Env:
     VarId: X
 
 # Side effects: increment
-
-Threads::
-  Thread::
+Threads:
+  Thread:
     K::
       -Increment:
         VarId: X
@@ -78,3 +77,49 @@ Store:
     Location: L
     -Value: V
     +Value: < V + 1
+
+# Obtaining the reference location of a name
+K::
+  -Reference:
+    VarId: X
+  +Integer: L
+Env:
+  Entry:
+    VarId: X
+    Location: L
+
+# Dereferencing a location
+Threads:
+  Thread:
+    K::
+      -Dereference:
+        Integer: L
+      +Value: V
+Store:
+  Entry:
+    Location: L
+    Value: V
+
+# Memory allocation (TODO: zero out the store)
+Threads:
+  Thread:
+    K::
+      -Malloc:
+        Integer: N
+      +Integer: L
+Ptr:
+  +Entry:
+    Location: L
+    Size: N
+-NextLoc: L
++NextLoc: L + N
+
+# Free (TODO: bottom out the store)
+Threads:
+  Thread:
+    K::
+      -Free:
+        Integer: L
+Ptr:
+  -Entry:
+    Location: L
