@@ -434,3 +434,107 @@ Agents:
 
 -Agent:
   Threads:=
+
+Threads:
+  Thread:
+    K::
+      -Me:
+      +Value:
+        Integer: M
+Me: M
+
+Threads:
+  Thread:
+    K::
+      -Parent:
+      +Value:
+        Integer: N
+Parent: N
+
+Agents:
+  Agent:
+    Threads:
+      Thread:
+        K::
+          -SendAsynch:
+            Receiver:
+              Value:
+                Integer: N
+            Message:
+              Value: V
+    Me: M
+Messages:
+  +Entry:
+    Sender: M
+    Receiver: N
+    Value: V
+
+Agents:
+  Agent:
+    Threads:
+      Thread:
+        K::
+          -ReceiveFrom:
+            Sender:
+              Value:
+                Integer: N
+          +Value: V
+    Me: M
+Messages:
+  -Entry:
+    Sender: N
+    Receiver: M
+    Value: V
+
+Agents:
+  Agent:
+    Threads:
+      Thread:
+        K::
+          -Receive:
+          +Value: V
+    Me: M
+Messages:
+  -Entry:
+    Receiver: M
+    Value: V
+
+Agent:
+  Threads:
+    Thread:
+      K::
+        -SendSynch
+          Receiver:
+            Value:
+              Integer: N
+          Message:
+            Value: V
+  Me: M
+Agent:
+  Threads:
+    Thread:
+      K::
+        -ReceiveFrom:
+          Sender:
+            Value:
+              Integer: M
+        +Value: V
+  Me: N
+
+Agent:
+  Threads:
+    Thread:
+      K::
+        -SendSynch
+          Receiver:
+            Value:
+              Integer: N
+          Message:
+            Value: V
+Agent:
+  Threads:
+    Thread:
+      K::
+        -Receive:
+        +Value: V
+  Me: N
