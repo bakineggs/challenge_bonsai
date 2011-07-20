@@ -325,3 +325,28 @@ K::
   -RandomBool:
   +Value:
     Bool: false
+
+# Threads
+Thread:
+  K::
+    -Spawn::=
+      *:* S
+  Env: E
++Thread:
+  K::
+    *:* S
+  Env: E
+  Holds:
+
+-Thread:
+  K::=
+  Holds:=
+
+Threads:
+  Thread:
+    K::=
+    Holds:
+      -Entry:
+        Value: V
+Busy:
+  -Value: V
