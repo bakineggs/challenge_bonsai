@@ -7,7 +7,7 @@ T:
           Env:
           Holds:
       Store:
-      NextLoc: 1
+      NextLoc: 0
       Aspect:
       Busy:
       Me: 1 ???

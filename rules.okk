@@ -404,3 +404,33 @@ Thread:
   K::
     -Rendezvous:
       Value: V
+
+# Agents
+Agents:
+  Agent:
+    Threads:
+      Thread:
+        K::
+          -NewAgent::
+            *:* S
+          +Value:
+            Integer: N
+    Me: M
+  +Agent:
+    Threads:
+      Thread:
+        K::
+          *:* S
+        Env:
+        Holds:
+    Busy:
+    Me: N
+    Parent: M
+    Store:
+    NextLoc: 0
+    Aspect::
+-NextAgent: N
++NextAgent: < N + 1
+
+-Agent:
+  Threads:=
