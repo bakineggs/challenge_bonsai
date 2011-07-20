@@ -183,11 +183,12 @@ Aspect::=
 
 # Function application
 -LambdaApplication:
-  ClosureWithSavedEnv:
-    Vars:=
-    Arguments:=
-    Body:=
-      *:* S
+  Function:
+    ClosureWithSavedEnv:
+      Vars:=
+      Body::=
+        *:* S
+  Arguments:=
 +*:* S
 
 K::
@@ -200,11 +201,12 @@ Threads:
   Thread:
     K::
       LambdaApplication:
-        ClosureWithSavedEnv:
-          Vars::
-            -VarId: X
-          Arguments::
-            -Value: V
+        Function:
+          ClosureWithSavedEnv:
+            Vars::
+              -VarId: X
+        Arguments::
+          -Value: V
     Env:
       !Entry:
         VarId: X
@@ -220,9 +222,10 @@ Store:
 
 K::
   LambdaApplication:
-    ClosureWithSavedEnv:
-      Vars:
-        VarId: X
+    Function:
+      ClosureWithSavedEnv:
+        Vars:
+          VarId: X
 Env:
   -Entry:
     VarId: X
@@ -276,3 +279,32 @@ K::
 Env:
   -Entry:
     VarId: X
+
+# Call with current continuation (call/cc)
+K::=
+  -Callcc:
+    LambdaAbstraction: L
+  +LambdaApplication:
+    Function:
+      LambdaAbstraction: L
+    Arguments::
+      Value:
+        Cc:
+          Continuation::
+            *:* K
+          Env: E
+  *:* K
+Env: E
+
+K::=
+  -RestoreCc:
+    Cc:
+      Continuation::
+        *:* K
+      Env: E
+    Value: V
+  -*:*
+  +Value: V
+  +*:* K
+-Env:
++Env: E
