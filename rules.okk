@@ -538,3 +538,22 @@ Agent:
         -Receive:
         +Value: V
   Me: N
+
+# Abrupt Termination
+-K::
+  HaltThread:
++K::
+
+-Threads:
+  Thread:
+    K::
+      HaltAgent:
++Threads:
+
+-Agents:
+  Agent:
+    Threads:
+      Thread:
+        K::
+          HaltSystem:
++Agents:
