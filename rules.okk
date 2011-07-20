@@ -51,7 +51,8 @@ Threads:
 Store:
   +Entry:
     Location: L
-    Value: 0
+    Value:
+      Integer: 0
 -NextLoc: L
 +NextLoc: < L + 1
 
@@ -69,7 +70,7 @@ Threads:
     K::
       -Increment:
         VarId: X
-      +Integer: < V + 1
+      +Integer: < I + 1
     Env:
       Entry:
         VarId: X
@@ -77,8 +78,9 @@ Threads:
 Store:
   Entry:
     Location: L
-    -Value: V
-    +Value: < V + 1
+    Value:
+      -Integer: I
+      +Integer: < I + 1
 
 # Obtaining the reference location of a name
 K::
@@ -269,9 +271,10 @@ Store:
   +Entry:
     Location: L
     Value:
-      MuConstruct:
-        VarId: X
-        Body: B
+      Function:
+        MuConstruct:
+          VarId: X
+          Body: B
 -NextLoc: L
 +NextLoc: < L + 1
 
@@ -291,10 +294,11 @@ K::=
       LambdaAbstraction: L
     Arguments::
       Value:
-        Cc:
-          Continuation::
-            *:* K
-          Env: E
+        Function:
+          Cc:
+            Continuation::
+              *:* K
+            Env: E
   *:* K
 Env: E
 
@@ -312,12 +316,12 @@ K::=
 +Env: E
 
 # Sequential Non-determinism
-K::=
+K::
   -RandomBool:
   +Value:
     Bool: true
 
-K::=
+K::
   -RandomBool:
   +Value:
     Bool: false
