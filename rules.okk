@@ -394,3 +394,13 @@ Threads:
         Extras:=
 Busy:
   -Value: V
+
+# Rendez-vous synchronization
+Thread:
+  K::
+    -Rendezvous:
+      Value: V
+Thread:
+  K::
+    -Rendezvous:
+      Value: V
