@@ -184,7 +184,7 @@ Aspect::=
   *:* S
 
 # Function application
--LambdaApplication:
+-Application:
   Function:
     ClosureWithSavedEnv:
       Vars:=
@@ -202,7 +202,7 @@ Env: E
 Threads:
   Thread:
     K::
-      LambdaApplication:
+      Application:
         Function:
           ClosureWithSavedEnv:
             Vars::
@@ -223,7 +223,7 @@ Store:
 +NextLoc: < L + 1
 
 K::
-  LambdaApplication:
+  Application:
     Function:
       ClosureWithSavedEnv:
         Vars:
@@ -287,7 +287,7 @@ Env:
 K::=
   -Callcc:
     LambdaAbstraction: L
-  +LambdaApplication:
+  +Application:
     Function:
       LambdaAbstraction: L
     Arguments::
@@ -301,12 +301,14 @@ K::=
 Env: E
 
 K::=
-  -RestoreCc:
-    Cc:
-      Continuation::
-        *:* K
-      Env: E
-    Value: V
+  -Application:
+    Function:
+      Cc:
+        Continuation::
+          *:* K
+        Env: E
+    Arguments::
+      Value: V
   -*:*
   +Value: V
   +*:* K
