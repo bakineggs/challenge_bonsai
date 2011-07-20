@@ -350,3 +350,47 @@ Threads:
         Value: V
 Busy:
   -Value: V
+
+# Thread Synchronization
+K::
+  -Acquire:
+    Value: V
+Holds:
+  Entry:
+    Value: V
+    Extras:
+      +Extra:
+
+Threads:
+  Thread:
+    K::
+      -Acquire:
+        Value: V
+    Holds:
+      +Entry:
+        Value: V
+        Extras:
+Busy:
+  !Value: V
+  +Value: V
+
+K::
+  -Release:
+    Value: V
+Holds:
+  Entry:
+    Value: V
+    Extras:
+      -Extra:
+
+Threads:
+  Thread:
+    K::
+      -Release:
+        Value: V
+    Holds:
+      -Entry:
+        Value: V
+        Extras:=
+Busy:
+  -Value: V
