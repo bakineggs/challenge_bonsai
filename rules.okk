@@ -1,5 +1,7 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
+# TODO: make Value: contain either Bool:, Int:, or Real:
+
 # Reading from the store
 Threads:
   Thread:
@@ -308,3 +310,14 @@ K::=
   +*:* K
 -Env:
 +Env: E
+
+# Sequential Non-determinism
+K::=
+  -RandomBool:
+  +Value:
+    Bool: true
+
+K::=
+  -RandomBool:
+  +Value:
+    Bool: false
