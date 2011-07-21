@@ -1,5 +1,9 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
+# TODO:
+# - arithmetic/boolean expressions (from IMP, section 5.2)
+# - code generation
+
 # Reading from the store
 Threads:
   Thread:
@@ -557,3 +561,5 @@ Agent:
         K::
           HaltSystem:
 +Agents:
+
+# Code Generation
