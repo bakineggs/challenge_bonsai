@@ -1,7 +1,6 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
 # TODO:
-# - boolean expressions (from IMP, section 5.2)
 # - if
 # - while
 # - code generation
@@ -106,6 +105,99 @@
       Integer: B
 +Value:
   Real: < A / B
+
+# Boolean Expressions
+-LessThanOrEqualTo:
+  Smaller:=
+    Value:
+      Integer: A
+  Larger:=
+    Value:
+      Integer: B
+Value:
+  Bool: < A <= B
+
+-LessThanOrEqualTo:
+  Smaller:=
+    Value:
+      Real: A
+  Larger:=
+    Value:
+      Real: B
+Value:
+  Bool: < A <= B
+
+-LessThanOrEqualTo:
+  Smaller:=
+    Value:
+      Integer: A
+  Larger:=
+    Value:
+      Real: B
+Value:
+  Bool: < A <= B
+
+-LessThanOrEqualTo:
+  Smaller:=
+    Value:
+      Real: A
+  Larger:=
+    Value:
+      Integer: B
+Value:
+  Bool: < A <= B
+
+-Not:=
+  Value:
+    Bool: true
++Value:
+  Bool: false
+
+-Not:=
+  Value:
+    Bool: false
++Value:
+  Bool: true
+
+-And:
+  Operand:=
+    Value:
+      Bool: true
+  Operand:=
+    Value:
+      Bool: true
++Value:
+  Bool: true
+
+-And:
+  Operand:=
+    Value:
+      Bool: true
+  Operand:=
+    Value:
+      Bool: false
++Value:
+  Bool: false
+
+-And:
+  Operand:=
+    Value:
+      Bool: false
+  Operand:=
+    Value:
+      Bool: true
++Value:
+  Bool: false
+
+-And:
+  Operand:=
+    Value:
+      Bool: false
+  Operand:=
+    Value:
+      Bool: false
++Value:
+  Bool: false
 
 # Reading from the store
 Threads:
