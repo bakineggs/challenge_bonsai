@@ -1,8 +1,111 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
 # TODO:
-# - arithmetic/boolean expressions (from IMP, section 5.2)
+# - boolean expressions (from IMP, section 5.2)
+# - if
+# - while
 # - code generation
+
+# Arithmetic
+-Addition:
+  Operand:=
+    Value:
+      Integer: A
+  Operand:=
+    Value:
+      Integer: B
++Value:
+  Integer: < A + B
+
+-Addition:
+  Operand:=
+    Value:
+      Real: A
+  Operand:=
+    Value:
+      Real: B
++Value:
+  Real: < A + B
+
+-Addition:
+  Operand:=
+    Value:
+      Integer: A
+  Operand:=
+    Value:
+      Real: B
++Value:
+  Real: < A + B
+
+-Multiplication:
+  Operand:=
+    Value:
+      Integer: A
+  Operand:=
+    Value:
+      Integer: B
++Value:
+  Integer: < A * B
+
+-Multiplication:
+  Operand:=
+    Value:
+      Real: A
+  Operand:=
+    Value:
+      Real: B
++Value:
+  Real: < A * B
+
+-Multiplication:
+  Operand:=
+    Value:
+      Integer: A
+  Operand:=
+    Value:
+      Real: B
++Value:
+  Real: < A * B
+
+-Division:
+  Dividend:=
+    Value:
+      Integer: A
+  Divisor:=
+    Value:
+      Integer: B
++Value:
+  Integer: < A / B
+
+-Division:
+  Dividend:=
+    Value:
+      Real: A
+  Divisor:=
+    Value:
+      Real: B
++Value:
+  Real: < A / B
+
+-Division:
+  Dividend:=
+    Value:
+      Integer: A
+  Divisor:=
+    Value:
+      Real: B
++Value:
+  Real: < A / B
+
+-Division:
+  Dividend:=
+    Value:
+      Real: A
+  Divisor:=
+    Value:
+      Integer: B
++Value:
+  Real: < A / B
 
 # Reading from the store
 Threads:
