@@ -1,8 +1,6 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
 # TODO:
-# - if
-# - while
 # - code generation
 
 # Arithmetic
@@ -198,6 +196,39 @@ Value:
       Bool: false
 +Value:
   Bool: false
+
+# If
+-If:
+  Condition:=
+    Value:
+      Bool: true
+  Then::=
+    *:* S
++*:* S
+
+-If:
+  Condition:=
+    Value:
+      Bool: false
+  Else::=
+    *:* S
++*:* S
+
+# While
+K::
+  -While:
+    Condition:: B
+    Body::=
+      *:* S
+  +If:
+    Condition:: B
+    Then::
+      *:* S
+      While:
+        Condition: B
+        Body::
+          *:* S
+    Else::
 
 # Reading from the store
 Threads:
