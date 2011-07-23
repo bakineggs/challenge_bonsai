@@ -230,6 +230,18 @@ K::
           *:* S
     Else::
 
+# Output
+Agents:
+  Agent:
+    Threads:
+      Thread:
+        K::
+          -Output:
+            Value: V
+Output::=
+  *:*
+  +Value: V
+
 # Reading from the store
 Threads:
   Thread:
