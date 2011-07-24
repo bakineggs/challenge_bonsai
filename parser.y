@@ -2,27 +2,13 @@
   #include <stdlib.h>
   #include <stdio.h>
 
-  #include "okk/types.h"
+  #include "types.h"
   #include "okk/print.h"
 
   extern int yylex();
   void yyerror(const char* error) { printf("%s\n", error); }
 
   Node* state;
-
-  Node* new_node() {
-    Node* node = (Node*) malloc(sizeof(Node));
-    node->previous = NULL;
-    node->next = NULL;
-    node->type = NULL;
-    node->ordered = false;
-    node->integer_value = NULL;
-    node->decimal_value = NULL;
-    node->string_value = NULL;
-    node->parent = NULL;
-    node->children = NULL;
-    return node;
-  }
 %}
 
 %token <bool> BOOLEAN
