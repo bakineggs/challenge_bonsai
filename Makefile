@@ -15,3 +15,7 @@ parser.hpp: parser.cpp
 
 lexer.cpp: lexer.l parser.hpp
 	lex -o $@ $^
+
+clean:
+	cd okk; make clean
+	rm -f *.cpp *.hpp parser
