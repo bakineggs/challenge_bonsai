@@ -3,7 +3,7 @@ all: okk/interpreter parser
 okk/interpreter:
 	git submodule init
 	git submodule update
-	cd okk; make
+	cd okk; make interpreter
 
 parser: parser.cpp lexer.cpp
 	g++ -o $@ $^
