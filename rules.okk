@@ -1,108 +1,152 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
 # TODO:
+# - zero out store in malloc
+# - bottom out store in free
 # - code generation
 
 # Arithmetic
 -Addition:
-  Operand:=
-    Value:
-      Integer: A
-  Operand:=
-    Value:
-      Integer: B
+  Value:
+    Integer: A
+  Value:
+    Integer: B
 +Value:
   Integer: < A + B
 
 -Addition:
-  Operand:=
-    Value:
-      Real: A
-  Operand:=
-    Value:
-      Real: B
+  Value:
+    Real: A
+  Value:
+    Real: B
 +Value:
   Real: < A + B
 
 -Addition:
-  Operand:=
-    Value:
-      Integer: A
-  Operand:=
-    Value:
-      Real: B
+  Value:
+    Integer: A
+  Value:
+    Real: B
 +Value:
   Real: < A + B
 
++*:* S
+Addition:
+  -Unevaluated::=
+    *:* S
+  !Evaluating:
+  +Evaluating:
+
+-Value: V
+Addition:
+  -Evaluating:
+  +Value: V
+
 -Multiplication:
-  Operand:=
-    Value:
-      Integer: A
-  Operand:=
-    Value:
-      Integer: B
+  Value:
+    Integer: A
+  Value:
+    Integer: B
 +Value:
   Integer: < A * B
 
 -Multiplication:
-  Operand:=
-    Value:
-      Real: A
-  Operand:=
-    Value:
-      Real: B
+  Value:
+    Real: A
+  Value:
+    Real: B
 +Value:
   Real: < A * B
 
 -Multiplication:
-  Operand:=
-    Value:
-      Integer: A
-  Operand:=
-    Value:
-      Real: B
+  Value:
+    Integer: A
+  Value:
+    Real: B
 +Value:
   Real: < A * B
 
++*:* S
+Multiplication:
+  -Unevaluated::=
+    *:* S
+  !Evaluating:
+  +Evaluating:
+
+-Value: V
+Multiplication:
+  -Evaluating:
+  +Value: V
+
 -Division:
-  Dividend:=
+  Dividend:
     Value:
       Integer: A
-  Divisor:=
+  Divisor:
     Value:
       Integer: B
 +Value:
   Integer: < A / B
 
 -Division:
-  Dividend:=
+  Dividend:
     Value:
       Real: A
-  Divisor:=
+  Divisor:
     Value:
       Real: B
 +Value:
   Real: < A / B
 
 -Division:
-  Dividend:=
+  Dividend:
     Value:
       Integer: A
-  Divisor:=
+  Divisor:
     Value:
       Real: B
 +Value:
   Real: < A / B
 
 -Division:
-  Dividend:=
+  Dividend:
     Value:
       Real: A
-  Divisor:=
+  Divisor:
     Value:
       Integer: B
 +Value:
   Real: < A / B
+
++*:* S
+Division:
+  Dividend:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+  Divisor:
+    !Evaluating:
+
+-Value: V
+Division:
+  Dividend:
+    -Evaluating:
+    +Value: V
+
++*:* S
+Division:
+  Divisor:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+  Dividend:
+    !Evaluating:
+
+-Value: V
+Division:
+  Divisor:
+    -Evaluating:
+    +Value: V
 
 # Boolean Expressions
 -LessThanOrEqualTo:
@@ -116,90 +160,118 @@ Value:
   Bool: < A <= B
 
 -LessThanOrEqualTo:
-  Smaller:=
+  Smaller:
     Value:
       Real: A
-  Larger:=
+  Larger:
     Value:
       Real: B
 Value:
   Bool: < A <= B
 
 -LessThanOrEqualTo:
-  Smaller:=
+  Smaller:
     Value:
       Integer: A
-  Larger:=
+  Larger:
     Value:
       Real: B
 Value:
   Bool: < A <= B
 
 -LessThanOrEqualTo:
-  Smaller:=
+  Smaller:
     Value:
       Real: A
-  Larger:=
+  Larger:
     Value:
       Integer: B
 Value:
   Bool: < A <= B
 
--Not:=
++*:* S
+LessThanOrEqualTo:
+  Smaller:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+
+-Value: V
+LessThanOrEqualTo:
+  Smaller:
+    -Evaluating:
+    +Value: V
+
++*:* S
+LessThanOrEqualTo:
+  Larger:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+  Smaller:
+    Value:
+
+-Value: V
+LessThanOrEqualTo:
+  Larger:
+    -Evaluating:
+    +Value: V
+
+-Not:
   Value:
     Bool: true
 +Value:
   Bool: false
 
--Not:=
+-Not:
   Value:
     Bool: false
 +Value:
   Bool: true
 
--And:
-  Operand:=
-    Value:
-      Bool: true
-  Operand:=
-    Value:
-      Bool: true
-+Value:
-  Bool: true
++*:* S
+Not:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Not:
+  -Evaluating:
+  +Value: V
 
 -And:
-  Operand:=
+  First:
     Value:
       Bool: true
-  Operand:=
+  Second:
+    -Unevaluated::=
+      *:* S
++*:* S
+
+-And:
+  First:
     Value:
       Bool: false
 +Value:
   Bool: false
 
--And:
-  Operand:=
-    Value:
-      Bool: false
-  Operand:=
-    Value:
-      Bool: true
-+Value:
-  Bool: false
++*:* S
+And:
+  First:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
 
--And:
-  Operand:=
-    Value:
-      Bool: false
-  Operand:=
-    Value:
-      Bool: false
-+Value:
-  Bool: false
+-Value: V
+And:
+  First:
+    -Evaluating:
+    +Value: V
 
 # If
 -If:
-  Condition:=
+  Condition:
     Value:
       Bool: true
   Then::=
@@ -207,21 +279,34 @@ Value:
 +*:* S
 
 -If:
-  Condition:=
+  Condition:
     Value:
       Bool: false
   Else::=
     *:* S
 +*:* S
 
++*:* S
+If:
+  Condition:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+
+-Value: V
+If:
+  Condition:
+    -Evaluating:
+    +Value: V
+
 # While
 K::
   -While:
-    Condition:: B
+    Condition: B
     Body::=
       *:* S
   +If:
-    Condition:: B
+    Condition: B
     Then::
       *:* S
       While:
@@ -240,6 +325,17 @@ Agents:
             Value: V
 Output::=
   *:*
+  +Value: V
+
++*:* S
+Output:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Output:
+  -Evaluating:
   +Value: V
 
 # Reading from the store
@@ -326,7 +422,8 @@ Store:
 K::
   -Reference:
     VarId: X
-  +Integer: L
+  +Value:
+    Integer: L
 Env:
   Entry:
     VarId: X
@@ -337,20 +434,34 @@ Threads:
   Thread:
     K::
       -Dereference:
-        Integer: L
+        Value:
+          Integer: L
       +Value: V
 Store:
   Entry:
     Location: L
     Value: V
 
++*:* S
+Dereference:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Dereference:
+  -Evaluating:
+  +Value: V
+
 # Memory allocation (TODO: zero out the store)
 Threads:
   Thread:
     K::
       -Malloc:
-        Integer: N
-      +Integer: L
+        Value:
+          Integer: N
+      +Value:
+        Integer: L
 Ptr:
   +Entry:
     Location: L
@@ -358,15 +469,38 @@ Ptr:
 -NextLoc: L
 +NextLoc: L + N
 
++*:* S
+Malloc:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Malloc:
+  -Evaluating:
+  +Value: V
+
 # Free (TODO: bottom out the store)
 Threads:
   Thread:
     K::
       -Free:
-        Integer: L
+        Value:
+          Integer: L
 Ptr:
   -Entry:
     Location: L
+
++*:* S
+Free:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Free:
+  -Evaluating:
+  +Value: V
 
 # Assignment
 Threads:
@@ -385,17 +519,44 @@ Store:
     -Value:
     +Value: V
 
++*:* S
+Assignment:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Assignment:
+  -Evaluating:
+  +Value: V
+
 # Dereferencing Assignment
 Threads:
   Thread:
     K::
       -Assignment:
-        Location: L
+        Location:
+          Value:
+            Integer: L
         Value: V
 Store:
   Entry:
     Location: L
     -Value:
+    +Value: V
+
++*:* S
+Assignment:
+  Value:
+  Location:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+
+-Value: V
+Assignment:
+  Location:
+    -Evaluating:
     +Value: V
 
 # Declare aspect
@@ -416,28 +577,32 @@ Threads:
         Vars: V
         Body::=
           *:* B
-      +Closure:
-        Vars: V
-        Body::
-          *:* S
-          *:* B
+      +Value:
+        Closure:
+          Vars: V
+          Body::
+            *:* S
+            *:* B
+          Env: E
     Env: E
 Aspect::=
   *:* S
 
 # Function application
 -Application:
-  Function:
-    ClosureWithSavedEnv:
-      Vars:=
-      Body::=
-        *:* S
+  ClosureWithSavedEnv:
+    Vars:=
+    Body::=
+      *:* S
   Arguments:=
+  EvaluatedArguments:=
 +*:* S
 
 K::
-  -Closure: C
-  +ClosureWithSavedEnv: C
+  Application:
+    -Value:
+      Closure: C
+    +ClosureWithSavedEnv: C
   +RestoreEnvironment: E
 Env: E
 
@@ -445,11 +610,11 @@ Threads:
   Thread:
     K::
       Application:
-        Function:
-          ClosureWithSavedEnv:
-            Vars::
-              -VarId: X
-        Arguments::
+        ClosureWithSavedEnv:
+          Vars::
+            -VarId: X
+        Arguments:=
+        EvaluatedArguments::
           -Value: V
     Env:
       !Entry:
@@ -466,13 +631,45 @@ Store:
 
 K::
   Application:
-    Function:
-      ClosureWithSavedEnv:
-        Vars:
-          VarId: X
+    ClosureWithSavedEnv:
+      Vars:
+        VarId: X
+    Arguments:=
 Env:
   -Entry:
     VarId: X
+
+Application:
+  !EvaluatedArguments::
+  +EvaluatedArguments::
+
++*:* S
+Application:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Application:
+  -Evaluating:
+  +Value: V
+
++*:* S
+Application:
+  !Unevaluated:
+  !Evaluating:
+  Arguments::
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+
+-Value: V
+Application:
+  Arguments::
+    -Evaluating:
+  EvaluatedArguments::=
+    *:*
+    +Value: V
 
 # Tail call optimization
 K::
@@ -490,7 +687,8 @@ Threads:
       +*:* S
 
 K::
-  -MuConstruct: M
+  -Value:
+    MuConstruct: M
   +MuConstructWithSavedEnv: M
   +RestoreEnvironment: E
 Env: E
@@ -511,10 +709,9 @@ Store:
   +Entry:
     Location: L
     Value:
-      Function:
-        MuConstruct:
-          VarId: X
-          Body: B
+      MuConstruct:
+        VarId: X
+        Body: B
 -NextLoc: L
 +NextLoc: < L + 1
 
@@ -528,28 +725,37 @@ Env:
 # Call with current continuation (call/cc)
 K::=
   -Callcc:
-    LambdaAbstraction: L
+    Value: V
   +Application:
-    Function:
-      LambdaAbstraction: L
+    Value: V
     Arguments::
       Value:
-        Function:
-          Cc:
-            Continuation::
-              *:* K
-            Env: E
+        Cc:
+          Continuation::
+            *:* K
+          Env: E
   *:* K
 Env: E
 
++*:* S
+Callcc:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Callcc:
+  -Evaluating:
+  +Value: V
+
 K::=
   -Application:
-    Function:
+    Value:
       Cc:
         Continuation::
           *:* K
         Env: E
-    Arguments::
+    Arguments::=
       Value: V
   -*:*
   +Value: V
@@ -616,6 +822,17 @@ Busy:
   !Value: V
   +Value: V
 
++*:* S
+Acquire:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Acquire:
+  -Evaluating:
+  +Value: V
+
 K::
   -Release:
     Value: V
@@ -637,6 +854,17 @@ Threads:
 Busy:
   -Value: V
 
++*:* S
+Release:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Release:
+  -Evaluating:
+  +Value: V
+
 # Rendez-vous synchronization
 Thread:
   K::
@@ -646,6 +874,17 @@ Thread:
   K::
     -Rendezvous:
       Value: V
+
++*:* S
+Rendezvous:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+Rendezvous:
+  -Evaluating:
+  +Value: V
 
 # Agents
 Agents:
@@ -711,15 +950,44 @@ Messages:
     Receiver: N
     Value: V
 
++*:* S
+SendAsynch:
+  Receiver:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+  Message:
+    !Evaluating:
+
+-Value: V
+SendAsynch:
+  Receiver:
+    -Evaluating:
+    +Value: V
+
++*:* S
+SendAsynch:
+  Message:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+  Receiver:
+    !Evaluating:
+
+-Value: V
+SendAsynch:
+  Message:
+    -Evaluating:
+    +Value: V
+
 Agents:
   Agent:
     Threads:
       Thread:
         K::
           -ReceiveFrom:
-            Sender:
-              Value:
-                Integer: N
+            Value:
+              Integer: N
           +Value: V
     Me: M
 Messages:
@@ -727,6 +995,17 @@ Messages:
     Sender: N
     Receiver: M
     Value: V
+
++*:* S
+ReceiveFrom:
+  -Unevaluated::=
+    *:* S
+  +Evaluating:
+
+-Value: V
+ReceiveFrom:
+  -Evaluating:
+  +Value: V
 
 Agents:
   Agent:
@@ -757,9 +1036,8 @@ Agent:
     Thread:
       K::
         -ReceiveFrom:
-          Sender:
-            Value:
-              Integer: M
+          Value:
+            Integer: M
         +Value: V
   Me: N
 
@@ -780,6 +1058,36 @@ Agent:
         -Receive:
         +Value: V
   Me: N
+
++*:* S
+SendSynch:
+  Receiver:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+  Message:
+    !Evaluating:
+
+-Value: V
+SendSynch:
+  Receiver:
+    -Evaluating:
+    +Value: V
+
++*:* S
+SendSynch:
+  Message:
+    -Unevaluated::=
+      *:* S
+    +Evaluating:
+  Receiver:
+    !Evaluating:
+
+-Value: V
+SendSynch:
+  Message:
+    -Evaluating:
+    +Value: V
 
 # Abrupt Termination
 -K::
