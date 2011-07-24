@@ -1,8 +1,14 @@
 %{
+  #include <stdlib.h>
+  #include <stdio.h>
+
   #include "okk/types.h"
   #include "okk/print.h"
 
   extern int yylex();
+  void yyerror(const char* error) { printf("%s\n", error); }
+
+  Node* state;
 
   Node* new_node() {
     Node* node = (Node*) malloc(sizeof(Node));
@@ -19,7 +25,7 @@
   }
 %}
 
-%token <bool> BOOL
+%token <bool> BOOLEAN
 %token <int> INT
 %token <real> REAL
 %token <var_id> VAR_ID
@@ -34,18 +40,27 @@
   Node* node;
 }
 
-%type <node> stmt exp;
+%type <node> firststmt stmt exp;
 
-%start stmt
+%start firststmt
+
+%%
+
+firststmt : stmt { state = $1; }
+
+stmt : { $$ = NULL; }
+     | stmt SEMI stmt { $$ = $1; if (!$$) $$ = $3; if ($1 && $3) { $1->next = $3; $3->previous = $1; } }
+     | IF exp THEN stmt ELSE stmt { $$ = new_node(); }
+
+exp : BOOLEAN { $$ = new_node(); }
+    | INT { $$ = new_node(); }
+    | REAL { $$ = new_node(); }
+    | VAR_ID { $$ = new_node(); }
 
 %%
 
-stmt : stmt SEMI stmt
-     | IF exp THEN stmt ELSE stmt
-
-exp : BOOL
-    | INT
-    | REAL
-    | VAR_ID
-
-%%
+int main() {
+  yyparse();
+  print_node(state);
+  return 0;
+}

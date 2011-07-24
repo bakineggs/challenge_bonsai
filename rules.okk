@@ -219,15 +219,15 @@ LessThanOrEqualTo:
 
 -Not:
   Value:
-    Bool: true
+    Bool: 1
 +Value:
-  Bool: false
+  Bool: 0
 
 -Not:
   Value:
-    Bool: false
+    Bool: 0
 +Value:
-  Bool: true
+  Bool: 1
 
 +*:* S
 Not:
@@ -243,7 +243,7 @@ Not:
 -And:
   First:
     Value:
-      Bool: true
+      Bool: 1
   Second:
     -Unevaluated::=
       *:* S
@@ -252,9 +252,9 @@ Not:
 -And:
   First:
     Value:
-      Bool: false
+      Bool: 0
 +Value:
-  Bool: false
+  Bool: 0
 
 +*:* S
 And:
@@ -273,7 +273,7 @@ And:
 -If:
   Condition:
     Value:
-      Bool: true
+      Bool: 1
   Then::=
     *:* S
 +*:* S
@@ -281,7 +281,7 @@ And:
 -If:
   Condition:
     Value:
-      Bool: false
+      Bool: 0
   Else::=
     *:* S
 +*:* S
@@ -767,12 +767,12 @@ K::=
 K::
   -RandomBool:
   +Value:
-    Bool: true
+    Bool: 1
 
 K::
   -RandomBool:
   +Value:
-    Bool: false
+    Bool: 0
 
 # Threads
 Thread:

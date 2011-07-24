@@ -5,7 +5,7 @@ okk/interpreter:
 	git submodule update
 	cd okk; make interpreter
 
-parser: parser.cpp lexer.cpp
+parser: parser.cpp lexer.cpp okk/print.c
 	g++ -o $@ $^
 
 parser.cpp: parser.y

@@ -1,15 +1,75 @@
 %{
+  #include <stdlib.h>
+  #include <string>
+
+  #include "okk/types.h"
   #include "parser.hpp"
+
+  extern "C" int yywrap() { }
+
+  Node* new_node_l() {
+    Node* node = (Node*) malloc(sizeof(Node));
+    node->previous = NULL;
+    node->next = NULL;
+    node->type = NULL;
+    node->ordered = false;
+    node->integer_value = NULL;
+    node->decimal_value = NULL;
+    node->string_value = NULL;
+    node->parent = NULL;
+    node->children = NULL;
+    return node;
+  }
+
+  Node* value_parent(Node* node) {
+    Node* parent = new_node_l();
+    parent->type = (char*) "Value";
+    parent->children = node;
+    node->parent = parent;
+    return parent;
+  }
+
+  Node* bool_value(long int value) {
+    Node* node = new_node_l();
+    node->type = (char*) "Bool";
+    node->integer_value = (long int*) malloc(sizeof(long int));
+    *node->integer_value = value;
+    return value_parent(node);
+  }
+
+  Node* integer_value(long int value) {
+    Node* node = new_node_l();
+    node->type = (char*) "Integer";
+    node->integer_value = (long int*) malloc(sizeof(long int));
+    *node->integer_value = value;
+    return value_parent(node);
+  }
+
+  Node* real_value(long int value) {
+    Node* node = new_node_l();
+    node->type = (char*) "Real";
+    node->decimal_value = (double*) malloc(sizeof(double));
+    *node->decimal_value = value;
+    return value_parent(node);
+  }
+
+  Node* var_id(char* name, int length) {
+    Node* node = new_node_l();
+    node->type = (char*) "VarId";
+    node->string_value = (char*) malloc(sizeof(char) * (length + 1));
+    strcpy(node->string_value, name);
+    return node;
+  }
 %}
 
 %%
 
-true { yylval.bool = true; return BOOL; }
-false { yylval.bool = false; return BOOL; }
+true { yylval.node = bool_value(1); return BOOLEAN; }
+false { yylval.node = bool_value(0); return BOOLEAN; }
 
-[0-9]+ { yylval.int = parseInt(yytext); return INT; }
+[0-9]+ { yylval.node = integer_value(atol(yytext)); return INT; }
 
-[0-9]+\.[0-9]+ { yylval.real = parseReal(yytext); return REAL; }
+[0-9]+\.[0-9]+ { yylval.node = real_value(atof(yytext)); return REAL; }
 
 \+ { return PLUS; }
 \* { return STAR; } /* used for MUL and DEREF */
@@ -54,7 +114,7 @@ halt-thread { return HALT_THREAD; }
 halt-agent { return HALT_AGENT; }
 halt-system { return HALT_SYSTEM; }
 
-[a-zA-Z][a-zA-Z0-9_]* { yylval.var_id = parseVarId(yytext); return VAR_ID; }
+[a-zA-Z][a-zA-Z0-9_]* { yylval.node = var_id(yytext, yyleng); return VAR_ID; }
 
 \n
 \t
