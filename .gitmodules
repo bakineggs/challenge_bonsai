@@ -1,0 +1,3 @@
+[submodule "okk"]
+	path = okk
+	url = git://github.com/bakineggs/okk.git
