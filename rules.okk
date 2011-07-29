@@ -406,7 +406,8 @@ Threads:
     K::
       -Increment:
         VarId: X
-      +Integer: < I + 1
+      +Value:
+        Integer: < I + 1
     Env:
       Entry:
         VarId: X
