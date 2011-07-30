@@ -18,7 +18,7 @@
 %token PLUS STAR DIV LEQ NOT AND INCREMENT SEMI MALLOC REF LAMBDA DOT MU CALLCC
 %token RANDOM_BOOL NEW_AGENT ME PARENT RECEIVE RECEIVE_FROM QUOTE UNQUOTE EVAL
 %token VARS IF THEN ELSE WHILE DO OUTPUT ASSIGN ASPECT SPAWN ACQUIRE FREE RELEASE
-%token RENDEZVOUS SEND_ASYNCH SEND_SYNCH HALT_THREAD HALT_AGENT HALT_SYSTEM
+%token RENDEZVOUS SEND_ASYNCH SEND_SYNCH HALT_THREAD HALT_AGENT HALT_SYSTEM COMMA
 
 %token ERROR
 
@@ -39,12 +39,12 @@ stmt : { $$ = NULL; }
      | VARS
      | IF exp THEN stmt ELSE stmt {
        $$ = add_child(new_node("If"), add_child(new_node("Condition"), unevaluated_node($2)));
-       Node* then = add_child(new_node("Then"), $4);
-       then->ordered = true;
-       add_child($$, then);
-       Node* else = add_child(new_node("Else"), $6);
-       else->ordered = true;
-       add_child($$, else);
+       Node* then_stmt = add_child(new_node("Then"), $4);
+       then_stmt->ordered = true;
+       add_child($$, then_stmt);
+       Node* else_stmt = add_child(new_node("Else"), $6);
+       else_stmt->ordered = true;
+       add_child($$, else_stmt);
      }
      | WHILE exp DO stmt {
        $$ = new_node("While");
