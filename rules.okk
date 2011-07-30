@@ -150,10 +150,10 @@ Division:
 
 # Boolean Expressions
 -LessThanOrEqualTo:
-  Smaller:=
+  Smaller:
     Value:
       Integer: A
-  Larger:=
+  Larger:
     Value:
       Integer: B
 Value:
@@ -406,7 +406,8 @@ Threads:
     K::
       -Increment:
         VarId: X
-      +Integer: < I + 1
+      +Value:
+        Integer: < I + 1
     Env:
       Entry:
         VarId: X
@@ -417,6 +418,24 @@ Store:
     Value:
       -Integer: I
       +Integer: < I + 1
+
+Threads:
+  Thread:
+    K::
+      -Increment:
+        VarId: X
+      +Value:
+        Real: < R + 1
+    Env:
+      Entry:
+        VarId: X
+        Location: L
+Store:
+  Entry:
+    Location: L
+    Value:
+      -Real: R
+      +Real: < R + 1
 
 # Obtaining the reference location of a name
 K::

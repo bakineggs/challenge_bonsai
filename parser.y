@@ -8,7 +8,7 @@
   extern int yylex();
   void yyerror(const char* error) { printf("%s\n", error); }
 
-  Node* state;
+  Node* computation;
 %}
 
 %token <bool> BOOLEAN
@@ -32,21 +32,138 @@
 
 %%
 
-firststmt : stmt { state = $1; }
+firststmt : stmt { computation = $1; }
 
 stmt : { $$ = NULL; }
      | stmt SEMI stmt { $$ = $1; if (!$$) $$ = $3; if ($1 && $3) { $1->next = $3; $3->previous = $1; } }
-     | IF exp THEN stmt ELSE stmt { $$ = new_node(); }
+     | VARS
+     | IF exp THEN stmt ELSE stmt {
+       $$ = add_child(new_node("If"), add_child(new_node("Condition"), unevaluated_node($2)));
+       Node* then = add_child(new_node("Then"), $4);
+       then->ordered = true;
+       add_child($$, then);
+       Node* else = add_child(new_node("Else"), $6);
+       else->ordered = true;
+       add_child($$, else);
+     }
+     | WHILE exp DO stmt {
+       $$ = new_node("While");
+       add_child($$, add_child(new_node("Condition"), unevaluated_node($2)));
+       Node* body = new_node("Body");
+       body->ordered = true;
+       add_child($$, add_child(body, $4));
+     }
+     | OUTPUT exp { $$ = add_child(new_node("Output"), unevaluated_node($2)); }
+     | exp ASSIGN exp { $$ = add_child(new_node("Assignment"), $1); add_child($$, unevaluated_node($3)); }
+     | ASPECT stmt { $$ = add_child(new_node("Aspect"), $2); $$->ordered = true; }
+     | SPAWN stmt { $$ = add_child(new_node("Spawn"), $2); $$->ordered = true; }
+     | ACQUIRE exp { $$ = add_child(new_node("Acquire"), unevaluated_node($2)); }
+     | FREE exp { $$ = add_child(new_node("Free"), unevaluated_node($2)); }
+     | RELEASE exp { $$ = add_child(new_node("Release"), unevaluated_node($2)); }
+     | RENDEZVOUS exp { $$ = add_child(new_node("Rendezvous"), unevaluated_node($2)); }
+     | SEND_ASYNCH exp COMMA exp {
+       $$ = new_node("SendAsynch");
+       add_child($$, add_child(new_node("Receiver"), unevaluated_node($2)));
+       add_child($$, add_child(new_node("Message"), unevaluated_node($4)));
+     }
+     | SEND_SYNCH exp COMMA exp {
+       $$ = new_node("SendSynch");
+       add_child($$, add_child(new_node("Receiver"), unevaluated_node($2)));
+       add_child($$, add_child(new_node("Message"), unevaluated_node($4)));
+     }
+     | HALT_THREAD { $$ = new_node("HaltThread"); }
+     | HALT_AGENT { $$ = new_node("HaltAgent"); }
+     | HALT_SYSTEM { $$ = new_node("HaltSystem"); }
 
-exp : BOOLEAN { $$ = new_node(); }
-    | INT { $$ = new_node(); }
-    | REAL { $$ = new_node(); }
-    | VAR_ID { $$ = new_node(); }
-
+exp : BOOLEAN
+    | INT
+    | REAL
+    | VAR_ID
+    | exp PLUS exp { $$ = new_node("Addition"); add_child($$, unevaluated_node($1)); add_child($$, unevaluated_node($3)); }
+    | exp STAR exp { $$ = new_node("Multiplication"); add_child($$, unevaluated_node($1)); add_child($$, unevaluated_node($3)); }
+    | exp DIV exp {
+      $$ = new_node("Division");
+      add_child($$, add_child(new_node("Dividend"), unevaluated_node($1)));
+      add_child($$, add_child(new_node("Divisor"), unevaluated_node($3)));
+    }
+    | exp LEQ exp {
+      $$ = new_node("LessThanOrEqualTo");
+      add_child($$, add_child(new_node("Smaller"), unevaluated_node($1)));
+      add_child($$, add_child(new_node("Larger"), unevaluated_node($3)));
+    }
+    | NOT exp { $$ = add_child(new_node("Not"), unevaluated_node($2)); }
+    | exp AND exp {
+      $$ = new_node("And");
+      add_child($$, add_child(new_node("First"), unevaluated_node($1)));
+      add_child($$, add_child(new_node("Second"), unevaluated_node($1)));
+    }
+    | INCREMENT exp { $$ = add_child(new_node("Increment"), unevaluated_node($2)); }
+    | stmt SEMI exp { $$ = $1; if (!$$) $$ = $3; if ($1 && $3) { $1->next = $3; $3->previous = $1; } }
+    | MALLOC exp { $$ = add_child(new_node("Malloc"), unevaluated_node($2)); }
+    | REF exp { $$ = add_child(new_node("Reference"), $2); }
+    | LAMBDA
+    | MU
+    | CALLCC exp { $$ = add_child(new_node("Callcc"), unevaluated_node($2)); }
+    | RANDOM_BOOL { $$ = new_node("RandomBool"); }
+    | NEW_AGENT stmt { $$ = add_child(new_node("NewAgent"), $2); $$->ordered = true; }
+    | ME { $$ = new_node("Me"); }
+    | PARENT { $$ = new_node("Parent"); }
+    | RECEIVE { $$ = new_node("Receive"); }
+    | RECEIVE_FROM exp { $$ = add_child(new_node("ReceiveFrom"), unevaluated_node($2)); }
+    | QUOTE exp { $$ = NULL; }
+    | UNQUOTE exp { $$ = NULL; }
+    | EVAL exp { $$ = NULL; }
 %%
 
 int main() {
   yyparse();
-  print_node(state);
+
+  Node* configuration = new_node("T");
+
+  Node* agent = new_node("Agent");
+  add_child(configuration, add_child(new_node("Agents"), agent));
+
+  Node* thread = new_node("Thread");
+  add_child(agent, add_child(new_node("Threads"), thread));
+
+  Node* k = add_child(new_node("K"), computation);
+  k->ordered = true;
+  add_child(thread, k);
+
+  add_child(thread, new_node("Env"));
+  add_child(thread, new_node("Holds"));
+
+  add_child(agent, new_node("Store"));
+  add_child(agent, new_node("Aspect"));
+  add_child(agent, new_node("Busy"));
+  add_child(agent, new_node("Ptr"));
+
+  Node* next_loc = new_node("NextLoc");
+  next_loc->integer_value = (long int*) malloc(sizeof(long int));
+  *next_loc->integer_value = 0;
+  add_child(agent, next_loc);
+
+  Node* me = new_node("Me");
+  me->integer_value = (long int*) malloc(sizeof(long int));
+  *me->integer_value = 0; // TODO: what is the starting Me value?
+  add_child(agent, me);
+
+  Node* parent = new_node("Parent");
+  parent->integer_value = (long int*) malloc(sizeof(long int));
+  *parent->integer_value = 0; // TODO: what is the starting Parent value?
+  add_child(agent, parent);
+
+  Node* output = new_node("Output");
+  output->ordered = true;
+  add_child(configuration, output);
+
+  add_child(configuration, new_node("Messages"));
+
+  Node* next_agent = new_node("NextAgent");
+  next_agent->integer_value = (long int*) malloc(sizeof(long int));
+  *next_agent->integer_value = 1;
+  add_child(configuration, next_agent);
+
+  print_node(configuration);
   return 0;
 }

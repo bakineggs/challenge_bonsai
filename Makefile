@@ -16,6 +16,9 @@ parser.hpp: parser.cpp
 lexer.cpp: lexer.l parser.hpp
 	lex -o $@ $^
 
+test: all
+	sh test.sh
+
 clean:
 	cd okk; make clean
 	rm -f *.cpp *.hpp *.o parser
