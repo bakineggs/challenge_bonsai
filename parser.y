@@ -6,7 +6,7 @@
   #include "okk/print.h"
 
   extern int yylex();
-  void yyerror(const char* error) { printf("%s\n", error); }
+  void yyerror(const char* error) { fprintf(stderr, "%s\n", error); }
 
   Node* computation;
 %}
