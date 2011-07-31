@@ -4,7 +4,7 @@ cd tests
 
 leaf_directories=`find . -type d | sort | awk '$0 !~ last {print last} {last=$0} END {print last}'` # http://stackoverflow.com/questions/1574403/list-all-leaf-subdirectories-in-linux
 for name in $leaf_directories; do
-  ./../parser $name/program.challenge > $name/start_state.okks 2> $name/parser_error.log
+  ./../parser < $name/program.challenge > $name/start_state.okks 2> $name/parser_error.log
   parser_status=$?
 
   if [ $parser_status != 0 ]; then
