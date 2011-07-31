@@ -28,6 +28,10 @@ and { return AND; }
 malloc { return MALLOC; }
 & { return REF; }
 lambda { return LAMBDA; }
+\{ { return OPENBLOCK; }
+\} { return CLOSEBLOCK; }
+\( { return STARTARGS; }
+\) { return ENDARGS; }
 \. { return DOT; }
 mu { return MU; }
 callcc { return CALLCC; }
@@ -69,6 +73,6 @@ halt-system { return HALT_SYSTEM; }
 \r
 \x20
 
-. { return ERROR; }
+. { exit(1); }
 
 %%
