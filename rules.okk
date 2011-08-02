@@ -554,7 +554,7 @@ Threads:
   Thread:
     K::
       -Assignment:
-        Location:
+        Dereference:
           Value:
             Integer: L
         Value: V
@@ -567,14 +567,14 @@ Store:
 +*:* S
 Assignment:
   Value:
-  Location:
+  Dereference:
     -Unevaluated::=
       *:* S
     +Evaluating:
 
 -Value: V
 Assignment:
-  Location:
+  Dereference:
     -Evaluating:
     +Value: V
 

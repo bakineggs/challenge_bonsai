@@ -120,6 +120,7 @@ exp : BOOLEAN
     | stmt SEMI exp { $$ = $1; if (!$$) $$ = $3; if ($1 && $3) { $1->next = $3; $3->previous = $1; } }
     | MALLOC exp { $$ = add_child(new_node("Malloc"), unevaluated_node($2)); }
     | REF exp { $$ = add_child(new_node("Reference"), $2); }
+    | STAR exp { $$ = add_child(new_node("Dereference"), unevaluated_node($2)); }
     | LAMBDA var_list DOT stmt {
       $$ = new_node("LambdaAbstraction");
       Node* vars = new_node("Vars");
