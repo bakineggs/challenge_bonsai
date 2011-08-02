@@ -19,7 +19,7 @@
 %token RANDOM_BOOL NEW_AGENT ME PARENT RECEIVE RECEIVE_FROM QUOTE UNQUOTE EVAL
 %token VARS IF THEN ELSE WHILE DO OUTPUT ASSIGN ASPECT SPAWN ACQUIRE FREE RELEASE
 %token RENDEZVOUS SEND_ASYNCH SEND_SYNCH HALT_THREAD HALT_AGENT HALT_SYSTEM COMMA
-%token OPENBLOCK CLOSEBLOCK STARTARGS ENDARGS
+%token OPENBLOCK CLOSEBLOCK LPAREN RPAREN
 
 %token ERROR
 
@@ -119,7 +119,7 @@ exp : BOOLEAN
       body->ordered = true;
       add_child($$, add_child(body, $4));
     }
-    | exp STARTARGS exp_list ENDARGS {
+    | exp LPAREN exp_list RPAREN {
       $$ = new_node("Application");
       add_child($$, unevaluated_node($1));
       Node* arguments = new_node("Arguments");
@@ -143,6 +143,7 @@ exp : BOOLEAN
     | QUOTE exp { $$ = NULL; }
     | UNQUOTE exp { $$ = NULL; }
     | EVAL exp { $$ = NULL; }
+    | LPAREN exp RPAREN { $$ = $2; }
 
 var_list : VAR_ID
          | var_list COMMA VAR_ID { $$->next = $3; $3->previous = $$; }

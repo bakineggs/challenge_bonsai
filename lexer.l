@@ -31,8 +31,8 @@ lambda { return LAMBDA; }
 , { return COMMA; }
 \{ { return OPENBLOCK; }
 \} { return CLOSEBLOCK; }
-\( { return STARTARGS; }
-\) { return ENDARGS; }
+\( { return LPAREN; }
+\) { return RPAREN; }
 \. { return DOT; }
 mu { return MU; }
 callcc { return CALLCC; }
