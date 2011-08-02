@@ -2,3 +2,5 @@ lexer.cpp
 parser.cpp
 parser.hpp
 parser
+parser_error.log
+start_state.okks
