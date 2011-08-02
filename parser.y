@@ -21,8 +21,6 @@
 %token RENDEZVOUS SEND_ASYNCH SEND_SYNCH HALT_THREAD HALT_AGENT HALT_SYSTEM COMMA
 %token OPENBLOCK CLOSEBLOCK LPAREN RPAREN
 
-%token ERROR
-
 %union {
   Node* node;
 }
@@ -30,6 +28,17 @@
 %type <node> firststmt stmt exp var_list exp_list;
 
 %start firststmt
+
+%right SEMI
+%nonassoc ELSE
+%left COMMA
+%nonassoc MALLOC REF DOT CALLCC NEW_AGENT INCREMENT RECEIVE_FROM EVAL QUOTE UNQUOTE DO OUTPUT ASSIGN ASPECT SPAWN ACQUIRE FREE RELEASE RENDEZVOUS
+%nonassoc NOT
+%left AND
+%nonassoc LEQ
+%left PLUS
+%right LPAREN
+%left STAR DIV
 
 %%
 
