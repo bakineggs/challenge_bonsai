@@ -18,10 +18,10 @@ for name in $leaf_directories; do
     diff $name/end_state.okks $name/actual_end_state.okks > /dev/null 2> /dev/null
     different=$?
 
-    if [ $error_status != 0 -o $different != 0 ]; then
+    if [ $interpreter_status != 0 -o $different != 0 ]; then
       echo "Test $name failed with the following errors:"
 
-      if [ $error_status != 0 ]; then
+      if [ $interpreter_status != 0 ]; then
         echo "  Interpreter returned non-zero status ($interpreter_status)"
       fi
 
