@@ -28,6 +28,7 @@ and { return AND; }
 malloc { return MALLOC; }
 & { return REF; }
 lambda { return LAMBDA; }
+, { return COMMA; }
 \{ { return OPENBLOCK; }
 \} { return CLOSEBLOCK; }
 \( { return STARTARGS; }
