@@ -1,9 +1,11 @@
-var odd,even,odd-calls,even-calls;
-aspect (odd-calls = odd-calls+1;)
-odd = lambda x . (if not(0 <= x) then return even(x+1); else if not(x <= 0) then return even(x+-1); else return false;);
-aspect (even-calls = even-calls+1;)
-even = lambda x . (if not(0 <= x) then return odd(x+1); else if not(x <= 0) then return odd(x+-1); else return true;);
-print(odd(read));
-print(even(read));
-print(odd-calls);
-print(even-calls);
+{
+  vars odd,even,odd-calls,even-calls;
+  aspect odd-calls := odd-calls+1;
+  odd := lambda x . if not 0 <= x then return even(x+1); else if not x <= 0 then return even(x+-1); else return false;;
+  aspect even-calls := even-calls+1;
+  even := lambda x . if not 0 <= x then return odd(x+1); else if not x <= 0 then return odd(x+-1); else return true;;
+  output odd(7);
+  output even(11);
+  output odd-calls;
+  output even-calls;
+}

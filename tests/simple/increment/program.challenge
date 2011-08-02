@@ -1,3 +1,5 @@
-var x, y;
-y = 1.5 + ++y;
-print(y);
+{
+  vars x, y;
+  y := 1.5 + ++y;
+  output y
+}
