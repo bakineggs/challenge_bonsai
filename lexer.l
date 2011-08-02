@@ -13,9 +13,9 @@
 true { yylval.node = bool_value(1); return BOOLEAN; }
 false { yylval.node = bool_value(0); return BOOLEAN; }
 
-[0-9]+ { yylval.node = integer_value(atol(yytext)); return INT; }
+-?[0-9]+ { yylval.node = integer_value(atol(yytext)); return INT; }
 
-[0-9]+\.[0-9]+ { yylval.node = real_value(atof(yytext)); return REAL; }
+-?[0-9]+\.[0-9]+ { yylval.node = real_value(atof(yytext)); return REAL; }
 
 \+ { return PLUS; }
 \* { return STAR; } /* used for MUL and DEREF */
