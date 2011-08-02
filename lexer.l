@@ -34,6 +34,7 @@ lambda { return LAMBDA; }
 \( { return LPAREN; }
 \) { return RPAREN; }
 \. { return DOT; }
+return { return RETURN; }
 mu { return MU; }
 callcc { return CALLCC; }
 randomBool { return RANDOM_BOOL; }

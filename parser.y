@@ -19,7 +19,7 @@
 %token RANDOM_BOOL NEW_AGENT ME PARENT RECEIVE RECEIVE_FROM QUOTE UNQUOTE EVAL
 %token VARS IF THEN ELSE WHILE DO OUTPUT ASSIGN ASPECT SPAWN ACQUIRE FREE RELEASE
 %token RENDEZVOUS SEND_ASYNCH SEND_SYNCH HALT_THREAD HALT_AGENT HALT_SYSTEM COMMA
-%token OPENBLOCK CLOSEBLOCK LPAREN RPAREN
+%token OPENBLOCK CLOSEBLOCK LPAREN RPAREN RETURN
 
 %token ERROR
 
@@ -45,6 +45,15 @@ stmt : { $$ = NULL; }
        Node* body = new_node("Body");
        body->ordered = true;
        add_child($$, add_child(body, $5));
+     }
+     | OPENBLOCK stmt CLOSEBLOCK {
+       $$ = new_node("Block");
+       Node* vars = new_node("Vars");
+       vars->ordered = true;
+       add_child($$, vars);
+       Node* body = new_node("Body");
+       body->ordered = true;
+       add_child($$, add_child(body, $2));
      }
      | IF exp THEN stmt ELSE stmt {
        $$ = add_child(new_node("If"), add_child(new_node("Condition"), unevaluated_node($2)));
@@ -83,6 +92,7 @@ stmt : { $$ = NULL; }
      | HALT_THREAD { $$ = new_node("HaltThread"); }
      | HALT_AGENT { $$ = new_node("HaltAgent"); }
      | HALT_SYSTEM { $$ = new_node("HaltSystem"); }
+     | RETURN exp { $$ = add_child(new_node("Return"), unevaluated_node($2)); }
 
 exp : BOOLEAN
     | INT
@@ -110,7 +120,7 @@ exp : BOOLEAN
     | stmt SEMI exp { $$ = $1; if (!$$) $$ = $3; if ($1 && $3) { $1->next = $3; $3->previous = $1; } }
     | MALLOC exp { $$ = add_child(new_node("Malloc"), unevaluated_node($2)); }
     | REF exp { $$ = add_child(new_node("Reference"), $2); }
-    | LAMBDA var_list DOT exp {
+    | LAMBDA var_list DOT stmt {
       $$ = new_node("LambdaAbstraction");
       Node* vars = new_node("Vars");
       vars->ordered = true;
