@@ -65,7 +65,7 @@ halt-thread { return HALT_THREAD; }
 halt-agent { return HALT_AGENT; }
 halt-system { return HALT_SYSTEM; }
 
-[a-zA-Z][a-zA-Z0-9_]* { yylval.node = var_id(yytext, yyleng); return VAR_ID; }
+[a-zA-Z][a-zA-Z0-9_-]* { yylval.node = var_id(yytext, yyleng); return VAR_ID; }
 
 \n
 \t
