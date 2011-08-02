@@ -3,4 +3,6 @@ parser.cpp
 parser.hpp
 parser
 parser_error.log
+interpreter_error.log
 start_state.okks
+actual_end_state.okks
