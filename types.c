@@ -23,7 +23,7 @@ Node* add_child(Node* parent, Node* new_child) {
 
   if (parent->children) {
     Node* child = parent->children;
-    while (child) child = child->next;
+    while (child->next) child = child->next;
     new_child->previous = child;
     child->next = new_child;
   } else
