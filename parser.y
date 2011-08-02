@@ -19,7 +19,7 @@
 %token RANDOM_BOOL NEW_AGENT ME PARENT RECEIVE RECEIVE_FROM QUOTE UNQUOTE EVAL
 %token VARS IF THEN ELSE WHILE DO OUTPUT ASSIGN ASPECT SPAWN ACQUIRE FREE RELEASE
 %token RENDEZVOUS SEND_ASYNCH SEND_SYNCH HALT_THREAD HALT_AGENT HALT_SYSTEM COMMA
-%token OPENBLOCK CLOSEBLOCK LPAREN RPAREN RETURN
+%token OPENBLOCK CLOSEBLOCK LPAREN RPAREN
 
 %token ERROR
 
@@ -92,7 +92,6 @@ stmt : { $$ = NULL; }
      | HALT_THREAD { $$ = new_node("HaltThread"); }
      | HALT_AGENT { $$ = new_node("HaltAgent"); }
      | HALT_SYSTEM { $$ = new_node("HaltSystem"); }
-     | RETURN exp { $$ = add_child(new_node("Return"), unevaluated_node($2)); }
 
 exp : BOOLEAN
     | INT
