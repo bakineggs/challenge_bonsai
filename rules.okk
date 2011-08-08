@@ -1043,7 +1043,7 @@ Agent:
   Threads:
     Thread:
       K::
-        -SendSynch
+        -SendSynch:
           Receiver:
             Value:
               Integer: N
@@ -1064,7 +1064,7 @@ Agent:
   Threads:
     Thread:
       K::
-        -SendSynch
+        -SendSynch:
           Receiver:
             Value:
               Integer: N
