@@ -30,7 +30,7 @@
 +Value:
   Real: < A + B
 
-+*:* S
++*: S
 Addition:
   -Unevaluated::=
     *:* S
@@ -66,7 +66,7 @@ Addition:
 +Value:
   Real: < A * B
 
-+*:* S
++*: S
 Multiplication:
   -Unevaluated::=
     *:* S
@@ -118,7 +118,7 @@ Multiplication:
 +Value:
   Real: < A / B
 
-+*:* S
++*: S
 Division:
   Dividend:
     -Unevaluated::=
@@ -133,7 +133,7 @@ Division:
     -Evaluating:
     +Value: V
 
-+*:* S
++*: S
 Division:
   Divisor:
     -Unevaluated::=
@@ -189,7 +189,7 @@ Value:
 Value:
   Bool: < A <= B
 
-+*:* S
++*: S
 LessThanOrEqualTo:
   Smaller:
     -Unevaluated::=
@@ -202,7 +202,7 @@ LessThanOrEqualTo:
     -Evaluating:
     +Value: V
 
-+*:* S
++*: S
 LessThanOrEqualTo:
   Larger:
     -Unevaluated::=
@@ -229,7 +229,7 @@ LessThanOrEqualTo:
 +Value:
   Bool: 1
 
-+*:* S
++*: S
 Not:
   -Unevaluated::=
     *:* S
@@ -245,9 +245,9 @@ Not:
     Value:
       Bool: 1
   Second:
-    -Unevaluated::=
+    Unevaluated::=
       *:* S
-+*:* S
++*: S
 
 -And:
   First:
@@ -256,7 +256,7 @@ Not:
 +Value:
   Bool: 0
 
-+*:* S
++*: S
 And:
   First:
     -Unevaluated::=
@@ -276,7 +276,7 @@ And:
       Bool: 1
   Then::=
     *:* S
-+*:* S
++*: S
 
 -If:
   Condition:
@@ -284,9 +284,9 @@ And:
       Bool: 0
   Else::=
     *:* S
-+*:* S
++*: S
 
-+*:* S
++*: S
 If:
   Condition:
     -Unevaluated::=
@@ -308,11 +308,11 @@ K::
   +If:
     Condition: B
     Then::
-      *:* S
+      *: S
       While:
         Condition: B
         Body::
-          *:* S
+          *: S
     Else::
 
 # Output
@@ -327,7 +327,7 @@ Output::=
   *:*
   +Value: V
 
-+*:* S
++*: S
 Output:
   -Unevaluated::=
     *:* S
@@ -359,7 +359,7 @@ K::
     Vars:=
     Body:=
       *:* S
-  +*:* S
+  +*: S
 
 K::
   -Block: B
@@ -461,7 +461,7 @@ Store:
     Location: L
     Value: V
 
-+*:* S
++*: S
 Dereference:
   -Unevaluated::=
     *:* S
@@ -488,7 +488,7 @@ Ptr:
 -NextLoc: L
 +NextLoc: L + N
 
-+*:* S
++*: S
 Malloc:
   -Unevaluated::=
     *:* S
@@ -510,7 +510,7 @@ Ptr:
   -Entry:
     Location: L
 
-+*:* S
++*: S
 Free:
   -Unevaluated::=
     *:* S
@@ -538,7 +538,7 @@ Store:
     -Value:
     +Value: V
 
-+*:* S
++*: S
 Assignment:
   -Unevaluated::=
     *:* S
@@ -564,7 +564,7 @@ Store:
     -Value:
     +Value: V
 
-+*:* S
++*: S
 Assignment:
   Value:
   Dereference:
@@ -586,7 +586,7 @@ Threads:
         *:* S
 Aspect::=
   -*:*
-  +*:* S
+  +*: S
 
 # Bind aspect to function
 Threads:
@@ -600,8 +600,8 @@ Threads:
         Closure:
           Vars: V
           Body::
-            *:* S
-            *:* B
+            *: S
+            *: B
           Env: E
     Env: E
 Aspect::=
@@ -615,7 +615,7 @@ Aspect::=
       *:* S
   Arguments:=
   EvaluatedArguments:=
-+*:* S
++*: S
 
 K::
   Application:
@@ -662,7 +662,7 @@ Application:
   !EvaluatedArguments::
   +EvaluatedArguments::
 
-+*:* S
++*: S
 Application:
   -Unevaluated::=
     *:* S
@@ -673,7 +673,7 @@ Application:
   -Evaluating:
   +Value: V
 
-+*:* S
++*: S
 Application:
   !Unevaluated:
   !Evaluating:
@@ -703,7 +703,7 @@ Threads:
         !VarId:
         Body:
           *:* S
-      +*:* S
+      +*: S
 
 K::
   -Value:
@@ -751,12 +751,12 @@ K::=
       Value:
         Cc:
           Continuation::
-            *:* K
+            *: K
           Env: E
   *:* K
 Env: E
 
-+*:* S
++*: S
 Callcc:
   -Unevaluated::=
     *:* S
@@ -778,7 +778,7 @@ K::=
       Value: V
   -*:*
   +Value: V
-  +*:* K
+  +*: K
 -Env:
 +Env: E
 
@@ -801,7 +801,7 @@ Thread:
   Env: E
 +Thread:
   K::
-    *:* S
+    *: S
   Env: E
   Holds:
 
@@ -841,7 +841,7 @@ Busy:
   !Value: V
   +Value: V
 
-+*:* S
++*: S
 Acquire:
   -Unevaluated::=
     *:* S
@@ -873,7 +873,7 @@ Threads:
 Busy:
   -Value: V
 
-+*:* S
++*: S
 Release:
   -Unevaluated::=
     *:* S
@@ -894,7 +894,7 @@ Thread:
     -Rendezvous:
       Value: V
 
-+*:* S
++*: S
 Rendezvous:
   -Unevaluated::=
     *:* S
@@ -920,7 +920,7 @@ Agents:
     Threads:
       Thread:
         K::
-          *:* S
+          *: S
         Env:
         Holds:
     Busy:
@@ -969,7 +969,7 @@ Messages:
     Receiver: N
     Value: V
 
-+*:* S
++*: S
 SendAsynch:
   Receiver:
     -Unevaluated::=
@@ -984,7 +984,7 @@ SendAsynch:
     -Evaluating:
     +Value: V
 
-+*:* S
++*: S
 SendAsynch:
   Message:
     -Unevaluated::=
@@ -1015,7 +1015,7 @@ Messages:
     Receiver: M
     Value: V
 
-+*:* S
++*: S
 ReceiveFrom:
   -Unevaluated::=
     *:* S
@@ -1078,7 +1078,7 @@ Agent:
         +Value: V
   Me: N
 
-+*:* S
++*: S
 SendSynch:
   Receiver:
     -Unevaluated::=
@@ -1093,7 +1093,7 @@ SendSynch:
     -Evaluating:
     +Value: V
 
-+*:* S
++*: S
 SendSynch:
   Message:
     -Unevaluated::=
