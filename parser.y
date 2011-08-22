@@ -66,10 +66,10 @@ stmt : { $$ = NULL; }
      }
      | IF exp THEN stmt ELSE stmt {
        $$ = add_child(new_node("If"), add_child(new_node("Condition"), unevaluated_node($2)));
-       Node* then_stmt = add_child(new_node("Then"), $4);
+       Node* then_stmt = $4 ? add_child(new_node("Then"), $4) : new_node("Then");
        then_stmt->ordered = true;
        add_child($$, then_stmt);
-       Node* else_stmt = add_child(new_node("Else"), $6);
+       Node* else_stmt = $6 ? add_child(new_node("Else"), $6) : new_node("Else");
        else_stmt->ordered = true;
        add_child($$, else_stmt);
      }

@@ -14,7 +14,7 @@
          t := *(a+i);
          *(a+i) := *(a+j);
          *(a+j) := t
-      } else {};
+      } else ;
     output *(a+i)
   }
 }
