@@ -5,6 +5,34 @@
 # - bottom out store in free
 # - code generation
 
+# Access our parser
+%{
+  extern int yyparse();
+  extern Node* computation;
+%}
+
+# Build Configuration
+^:
+  !T:
+  +T:
+    Agents:
+      Agent:
+        Threads:
+          Thread:
+            K:: < yyparse(); add_child($$, computation);
+            Env:
+            Holds:
+        Store:
+        Aspect:
+        Busy:
+        Ptr:
+        NextLoc: 0
+        Me: 0
+        Parent: -1
+    Output::
+    Messages:
+    NextAgent: 1
+
 # Arithmetic
 -Addition:
   Value:
