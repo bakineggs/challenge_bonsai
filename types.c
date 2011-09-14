@@ -9,9 +9,7 @@ Node* new_node(const char* type) {
   node->type = (char*) malloc(sizeof(char) * (strlen(type) + 1));
   strcpy(node->type, type);
   node->ordered = false;
-  node->integer_value = NULL;
-  node->decimal_value = NULL;
-  node->string_value = NULL;
+  node->value_type = none;
   node->parent = NULL;
   node->children = NULL;
   return node;
@@ -34,8 +32,8 @@ Node* add_child(Node* parent, Node* new_child) {
 
 Node* bool_value(long int value) {
   Node* bool_node = new_node("Bool");
-  bool_node->integer_value = (long int*) malloc(sizeof(long int));
-  *bool_node->integer_value = value;
+  bool_node->value_type = integer;
+  bool_node->integer_value = value;
 
   Node* value_node = new_node("Value");
   add_child(value_node, bool_node);
@@ -44,8 +42,8 @@ Node* bool_value(long int value) {
 
 Node* integer_value(long int value) {
   Node* integer_node = new_node("Integer");
-  integer_node->integer_value = (long int*) malloc(sizeof(long int));
-  *integer_node->integer_value = value;
+  integer_node->value_type = integer;
+  integer_node->integer_value = value;
 
   Node* value_node = new_node("Value");
   add_child(value_node, integer_node);
@@ -54,8 +52,8 @@ Node* integer_value(long int value) {
 
 Node* real_value(double value) {
   Node* real_node = new_node("Real");
-  real_node->decimal_value = (double*) malloc(sizeof(double));
-  *real_node->decimal_value = value;
+  real_node->value_type = decimal;
+  real_node->decimal_value = value;
 
   Node* value_node = new_node("Value");
   add_child(value_node, real_node);
