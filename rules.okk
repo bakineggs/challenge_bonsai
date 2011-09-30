@@ -5,6 +5,34 @@
 # - bottom out store in free
 # - code generation
 
+# Access our parser
+%{
+  extern int yyparse();
+  extern Node* computation;
+%}
+
+# Build Configuration
+^:
+  !T:
+  +T:
+    Agents:
+      Agent:
+        Threads:
+          Thread:
+            K:: < yyparse(); add_child($$, computation);
+            Env:
+            Holds:
+        Store:
+        Aspect:
+        Busy:
+        Ptr:
+        NextLoc: 0
+        Me: 0
+        Parent: -1
+    Output::
+    Messages:
+    NextAgent: 1
+
 # Arithmetic
 -Addition:
   Value:
@@ -12,7 +40,7 @@
   Value:
     Integer: B
 +Value:
-  Integer: < A + B
+  Integer: < set_integer($$, $A->integer_value + $B->integer_value);
 
 -Addition:
   Value:
@@ -20,7 +48,7 @@
   Value:
     Real: B
 +Value:
-  Real: < A + B
+  Real: < set_decimal($$, $A->decimal_value + $B->decimal_value);
 
 -Addition:
   Value:
@@ -28,7 +56,7 @@
   Value:
     Real: B
 +Value:
-  Real: < A + B
+  Real: < set_decimal($$, $A->integer_value + $B->decimal_value);
 
 +*: S
 Addition:
@@ -48,7 +76,7 @@ Addition:
   Value:
     Integer: B
 +Value:
-  Integer: < A * B
+  Integer: < set_integer($$, $A->integer_value * $B->integer_value);
 
 -Multiplication:
   Value:
@@ -56,7 +84,7 @@ Addition:
   Value:
     Real: B
 +Value:
-  Real: < A * B
+  Real: < set_decimal($$, $A->decimal_value * $B->decimal_value);
 
 -Multiplication:
   Value:
@@ -64,7 +92,7 @@ Addition:
   Value:
     Real: B
 +Value:
-  Real: < A * B
+  Real: < set_decimal($$, $A->integer_value * $B->decimal_value);
 
 +*: S
 Multiplication:
@@ -86,7 +114,7 @@ Multiplication:
     Value:
       Integer: B
 +Value:
-  Integer: < A / B
+  Integer: < set_integer($$, $A->integer_value / $B->integer_value);
 
 -Division:
   Dividend:
@@ -96,7 +124,7 @@ Multiplication:
     Value:
       Real: B
 +Value:
-  Real: < A / B
+  Real: < set_decimal($$, $A->decimal_value / $B->decimal_value);
 
 -Division:
   Dividend:
@@ -106,7 +134,7 @@ Multiplication:
     Value:
       Real: B
 +Value:
-  Real: < A / B
+  Real: < set_decimal($$, $A->integer_value / B->decimal_value);
 
 -Division:
   Dividend:
@@ -116,7 +144,7 @@ Multiplication:
     Value:
       Integer: B
 +Value:
-  Real: < A / B
+  Real: < set_decimal($$, $A->decimal_value / B->integer_value);
 
 +*: S
 Division:
@@ -157,7 +185,7 @@ Division:
     Value:
       Integer: B
 Value:
-  Bool: < A <= B
+  Bool: < set_integer($$, $A->integer_value <= B->integer_value ? 1 : 0);
 
 -LessThanOrEqualTo:
   Smaller:
@@ -167,7 +195,7 @@ Value:
     Value:
       Real: B
 Value:
-  Bool: < A <= B
+  Bool: < set_integer($$, $A->decimal_value <= $B->decimal_value ? 1 : 0);
 
 -LessThanOrEqualTo:
   Smaller:
@@ -177,7 +205,7 @@ Value:
     Value:
       Real: B
 Value:
-  Bool: < A <= B
+  Bool: < set_integer($$, $A->integer_value <= $B->decimal_value ? 1 : 0);
 
 -LessThanOrEqualTo:
   Smaller:
@@ -187,7 +215,7 @@ Value:
     Value:
       Integer: B
 Value:
-  Bool: < A <= B
+  Bool: < set_integer($$, $A->decimal_value <= $B->integer_value ? 1 : 0);
 
 +*: S
 LessThanOrEqualTo:
@@ -390,7 +418,7 @@ Store:
     Value:
       Integer: 0
 -NextLoc: L
-+NextLoc: < L + 1
++NextLoc: < set_integer($$, $L->integer_value + 1);
 
 K::
   BlockWithSavedEnv:
@@ -407,7 +435,7 @@ Threads:
       -Increment:
         VarId: X
       +Value:
-        Integer: < I + 1
+        Integer: < set_integer($$, $I->integer_value + 1);
     Env:
       Entry:
         VarId: X
@@ -417,7 +445,7 @@ Store:
     Location: L
     Value:
       -Integer: I
-      +Integer: < I + 1
+      +Integer: < set_integer($$, $I->integer_value + 1);
 
 Threads:
   Thread:
@@ -425,7 +453,7 @@ Threads:
       -Increment:
         VarId: X
       +Value:
-        Real: < R + 1
+        Real: < set_decimal($$, $R->decimal_value + 1);
     Env:
       Entry:
         VarId: X
@@ -435,7 +463,7 @@ Store:
     Location: L
     Value:
       -Real: R
-      +Real: < R + 1
+      +Real: < set_decimal($$, $R->decimal_value + 1);
 
 # Obtaining the reference location of a name
 K::
@@ -646,7 +674,7 @@ Store:
     Location: L
     Value: V
 -NextLoc: L
-+NextLoc: < L + 1
++NextLoc: < set_integer($$, $L->integer_value + 1);
 
 K::
   Application:
@@ -732,7 +760,7 @@ Store:
         VarId: X
         Body: B
 -NextLoc: L
-+NextLoc: < L + 1
++NextLoc: < set_integer($$, $L->integer_value + 1);
 
 K::
   MuConstructWithSavedEnv:
@@ -930,7 +958,7 @@ Agents:
     NextLoc: 0
     Aspect::
 -NextAgent: N
-+NextAgent: < N + 1
++NextAgent: < set_integer($$, $N->integer_value + 1);
 
 -Agent:
   Threads:=
