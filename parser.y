@@ -12,9 +12,7 @@
   Node* computation;
 %}
 
-%token <node> BOOLEAN
-%token <node> INT
-%token <node> REAL
+%token <node> VALUE
 %token <node> VAR_ID
 %token PLUS STAR DIV LEQ NOT AND INCREMENT SEMI MALLOC REF LAMBDA DOT MU CALLCC
 %token RANDOM_BOOL NEW_AGENT ME PARENT RECEIVE RECEIVE_FROM QUOTE UNQUOTE EVAL
@@ -194,9 +192,13 @@ stmt : { $$ = NULL; }
      | HALT_AGENT { $$ = build_node("HaltAgent:"); }
      | HALT_SYSTEM { $$ = build_node("HaltSystem:"); }
 
-exp : BOOLEAN
-    | INT
-    | REAL
+exp : VALUE {
+      set_node("Value", $1);
+      $$ = build_node("
+        Value:
+          $Value
+      ");
+    }
     | VAR_ID
     | exp PLUS exp { $$ = new_node("Addition"); add_child($$, unevaluated_node($1)); add_child($$, unevaluated_node($3)); }
     | exp STAR exp { $$ = new_node("Multiplication"); add_child($$, unevaluated_node($1)); add_child($$, unevaluated_node($3)); }
