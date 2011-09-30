@@ -4,6 +4,7 @@
 
   #include "types.h"
   #include "okk/print.h"
+  #include "okk/node_builder.h"
 
   extern int yylex();
   void yyerror(const char* error) { fprintf(stderr, "%s\n", error); }
@@ -45,62 +46,153 @@
 firststmt : stmt { computation = $1; }
 
 stmt : { $$ = NULL; }
-     | stmt SEMI stmt { $$ = $1; if (!$$) $$ = $3; if ($1 && $3) { $1->next = $3; $3->previous = $1; } }
+     | stmt SEMI stmt {
+       $$ = $1 ? $1 : $3;
+       if ($1 && $3) {
+         $1->next = $3;
+         $3->previous = $1;
+       }
+     }
      | OPENBLOCK VARS var_list SEMI stmt CLOSEBLOCK {
-       $$ = new_node("Block");
-       Node* vars = new_node("Vars");
-       vars->ordered = true;
-       add_child($$, add_child(vars, $3));
-       Node* body = new_node("Body");
-       body->ordered = true;
-       add_child($$, add_child(body, $5));
+       set_node("Vars", $3);
+       set_node("Body", $5);
+       $$ = build_node("
+         Block:
+           Vars::
+             $Vars
+           Body::
+             $Body
+       ");
      }
      | OPENBLOCK stmt CLOSEBLOCK {
-       $$ = new_node("Block");
-       Node* vars = new_node("Vars");
-       vars->ordered = true;
-       add_child($$, vars);
-       Node* body = new_node("Body");
-       body->ordered = true;
-       add_child($$, add_child(body, $2));
+       set_node("Body", $2);
+       $$ = build_node("
+         Block:
+           Vars::
+           Body::
+             $Body
+       ");
      }
      | IF exp THEN stmt ELSE stmt {
-       $$ = add_child(new_node("If"), add_child(new_node("Condition"), unevaluated_node($2)));
-       Node* then_stmt = $4 ? add_child(new_node("Then"), $4) : new_node("Then");
-       then_stmt->ordered = true;
-       add_child($$, then_stmt);
-       Node* else_stmt = $6 ? add_child(new_node("Else"), $6) : new_node("Else");
-       else_stmt->ordered = true;
-       add_child($$, else_stmt);
+       set_node("Condition", $2);
+       set_node("Then", $4);
+       set_node("Else", $6);
+       $$ = build_node("
+         If:
+           Condition:
+             Unevaluated::
+               $Condition
+           Then::
+             $Then
+           Else::
+             $Else
+       ");
      }
      | WHILE exp DO stmt {
-       $$ = new_node("While");
-       add_child($$, add_child(new_node("Condition"), unevaluated_node($2)));
-       Node* body = new_node("Body");
-       body->ordered = true;
-       add_child($$, add_child(body, $4));
+       set_node("Condition", $2);
+       set_node("Body", $4);
+       $$ = build_node("
+         While:
+           Condition:
+             Unevaluated::
+               $Condition
+           Body::
+             $Body
+       ");
      }
-     | OUTPUT exp { $$ = add_child(new_node("Output"), unevaluated_node($2)); }
-     | exp ASSIGN exp { $$ = add_child(new_node("Assignment"), $1); add_child($$, unevaluated_node($3)); }
-     | ASPECT stmt { $$ = add_child(new_node("Aspect"), $2); $$->ordered = true; }
-     | SPAWN stmt { $$ = add_child(new_node("Spawn"), $2); $$->ordered = true; }
-     | ACQUIRE exp { $$ = add_child(new_node("Acquire"), unevaluated_node($2)); }
-     | FREE exp { $$ = add_child(new_node("Free"), unevaluated_node($2)); }
-     | RELEASE exp { $$ = add_child(new_node("Release"), unevaluated_node($2)); }
-     | RENDEZVOUS exp { $$ = add_child(new_node("Rendezvous"), unevaluated_node($2)); }
+     | OUTPUT exp {
+       set_node("Output", $2);
+       $$ = build_node("
+         Output:
+           Unevaluated::
+             $Output
+       ");
+     }
+     | exp ASSIGN exp {
+       set_node("VarId", $1);
+       set_node("Value", $3);
+       $$ = build_node("
+         Assignment:
+           $VarId
+           Unevaluated::
+             $Value
+       ");
+     }
+     | ASPECT stmt {
+       set_node("Body", $2);
+       $$ = build_node("
+         Aspect::
+           $Body
+       ");
+     }
+     | SPAWN stmt {
+       set_node("Body", $2);
+       $$ = build_node("
+         Spawn::
+           $Body
+       ");
+     }
+     | ACQUIRE exp {
+       set_node("Value", $2);
+       $$ = build_node("
+         Acquire:
+           Unevaluated::
+             $Value
+       ");
+     }
+     | FREE exp {
+       set_node("Value", $2);
+       $$ = build_node("
+         Free:
+           Unevaluated::
+             $Value
+       ");
+     }
+     | RELEASE exp {
+       set_node("Value", $2);
+       $$ = build_node("
+         Release:
+           Unevaluated::
+             $Value
+       ");
+     }
+     | RENDEZVOUS exp {
+       set_node("Value", $2);
+       $$ = build_node("
+         Rendezvous:
+           Unevaluated::
+             $Value
+       ");
+     }
      | SEND_ASYNCH exp COMMA exp {
-       $$ = new_node("SendAsynch");
-       add_child($$, add_child(new_node("Receiver"), unevaluated_node($2)));
-       add_child($$, add_child(new_node("Message"), unevaluated_node($4)));
+       set_node("Receiver", $2);
+       set_node("Message", $4);
+       $$ = build_node("
+         SendAsynch:
+           Receiver:
+             Unevaluated::
+               $Receiver
+           Message:
+             Unevaluated::
+               $Message
+       ");
      }
      | SEND_SYNCH exp COMMA exp {
-       $$ = new_node("SendSynch");
-       add_child($$, add_child(new_node("Receiver"), unevaluated_node($2)));
-       add_child($$, add_child(new_node("Message"), unevaluated_node($4)));
+       set_node("Receiver", $2);
+       set_node("Message", $4);
+       $$ = build_node("
+         SendSynch:
+           Receiver:
+             Unevaluated::
+               $Receiver
+           Message:
+             Unevaluated::
+               $Message
+       ");
      }
-     | HALT_THREAD { $$ = new_node("HaltThread"); }
-     | HALT_AGENT { $$ = new_node("HaltAgent"); }
-     | HALT_SYSTEM { $$ = new_node("HaltSystem"); }
+     | HALT_THREAD { $$ = build_node("HaltThread:"); }
+     | HALT_AGENT { $$ = build_node("HaltAgent:"); }
+     | HALT_SYSTEM { $$ = build_node("HaltSystem:"); }
 
 exp : BOOLEAN
     | INT
