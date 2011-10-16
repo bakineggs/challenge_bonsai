@@ -44,13 +44,16 @@
 firststmt : stmt { computation = $1; }
 
 stmt : { $$ = NULL; }
+
      | stmt SEMI stmt {
-       $$ = $1 ? $1 : $3;
-       if ($1 && $3) {
-         $1->next = $3;
-         $3->previous = $1;
-       }
+       set_node("Statement1", $1);
+       set_node("Statement2", $3);
+       $$ = build_node("
+         $Statement1
+         $Statement2
+       ");
      }
+
      | OPENBLOCK VARS var_list SEMI stmt CLOSEBLOCK {
        set_node("Vars", $3);
        set_node("Body", $5);
@@ -62,6 +65,7 @@ stmt : { $$ = NULL; }
              $Body
        ");
      }
+
      | OPENBLOCK stmt CLOSEBLOCK {
        set_node("Body", $2);
        $$ = build_node("
@@ -71,6 +75,7 @@ stmt : { $$ = NULL; }
              $Body
        ");
      }
+
      | IF exp THEN stmt ELSE stmt {
        set_node("Condition", $2);
        set_node("Then", $4);
@@ -86,6 +91,7 @@ stmt : { $$ = NULL; }
              $Else
        ");
      }
+
      | WHILE exp DO stmt {
        set_node("Condition", $2);
        set_node("Body", $4);
@@ -98,6 +104,7 @@ stmt : { $$ = NULL; }
              $Body
        ");
      }
+
      | OUTPUT exp {
        set_node("Output", $2);
        $$ = build_node("
@@ -106,6 +113,7 @@ stmt : { $$ = NULL; }
              $Output
        ");
      }
+
      | exp ASSIGN exp {
        set_node("VarId", $1);
        set_node("Value", $3);
@@ -116,6 +124,7 @@ stmt : { $$ = NULL; }
              $Value
        ");
      }
+
      | ASPECT stmt {
        set_node("Body", $2);
        $$ = build_node("
@@ -123,6 +132,7 @@ stmt : { $$ = NULL; }
            $Body
        ");
      }
+
      | SPAWN stmt {
        set_node("Body", $2);
        $$ = build_node("
@@ -130,6 +140,7 @@ stmt : { $$ = NULL; }
            $Body
        ");
      }
+
      | ACQUIRE exp {
        set_node("Value", $2);
        $$ = build_node("
@@ -138,6 +149,7 @@ stmt : { $$ = NULL; }
              $Value
        ");
      }
+
      | FREE exp {
        set_node("Value", $2);
        $$ = build_node("
@@ -146,6 +158,7 @@ stmt : { $$ = NULL; }
              $Value
        ");
      }
+
      | RELEASE exp {
        set_node("Value", $2);
        $$ = build_node("
@@ -154,6 +167,7 @@ stmt : { $$ = NULL; }
              $Value
        ");
      }
+
      | RENDEZVOUS exp {
        set_node("Value", $2);
        $$ = build_node("
@@ -162,6 +176,7 @@ stmt : { $$ = NULL; }
              $Value
        ");
      }
+
      | SEND_ASYNCH exp COMMA exp {
        set_node("Receiver", $2);
        set_node("Message", $4);
@@ -175,6 +190,7 @@ stmt : { $$ = NULL; }
                $Message
        ");
      }
+
      | SEND_SYNCH exp COMMA exp {
        set_node("Receiver", $2);
        set_node("Message", $4);
@@ -188,8 +204,11 @@ stmt : { $$ = NULL; }
                $Message
        ");
      }
+
      | HALT_THREAD { $$ = build_node("HaltThread:"); }
+
      | HALT_AGENT { $$ = build_node("HaltAgent:"); }
+
      | HALT_SYSTEM { $$ = build_node("HaltSystem:"); }
 
 exp : VALUE {
@@ -199,68 +218,228 @@ exp : VALUE {
           $Value
       ");
     }
+
     | VAR_ID
-    | exp PLUS exp { $$ = new_node("Addition"); add_child($$, unevaluated_node($1)); add_child($$, unevaluated_node($3)); }
-    | exp STAR exp { $$ = new_node("Multiplication"); add_child($$, unevaluated_node($1)); add_child($$, unevaluated_node($3)); }
+
+    | exp PLUS exp {
+      set_node("Addend1", $1);
+      set_node("Addend2", $3);
+      $$ = build_node("
+        Addition:
+          Unevaluated::
+            $Addend1
+          Unevaluated::
+            $Addend2
+      ");
+    }
+
+    | exp STAR exp {
+      set_node("Multiplicand1", $1);
+      set_node("Multiplicand2", $3);
+      $$ = build_node("
+        Multiplication:
+          Unevaluated::
+            $Multiplicand1
+          Unevaluated::
+            $Multiplicand2
+      ");
+    }
+
     | exp DIV exp {
-      $$ = new_node("Division");
-      add_child($$, add_child(new_node("Dividend"), unevaluated_node($1)));
-      add_child($$, add_child(new_node("Divisor"), unevaluated_node($3)));
+      set_node("Dividend", $1);
+      set_node("Divisor", $3);
+      $$ = build_node("
+        Division:
+          Dividend:
+            Unevaluated::
+              $Dividend
+          Divisor:
+            Unevaluated::
+              $Divisor
+      ");
     }
+
     | exp LEQ exp {
-      $$ = new_node("LessThanOrEqualTo");
-      add_child($$, add_child(new_node("Smaller"), unevaluated_node($1)));
-      add_child($$, add_child(new_node("Larger"), unevaluated_node($3)));
+      set_node("Smaller", $1);
+      set_node("Larger", $3);
+      $$ = build_node("
+        LessThanOrEqualTo:
+          Smaller:
+            Unevaluated::
+              $Smaller
+          Larger:
+            Unevaluated::
+              $Larger
+      ");
     }
-    | NOT exp { $$ = add_child(new_node("Not"), unevaluated_node($2)); }
+
+    | NOT exp {
+      set_node("Expression", $2);
+      $$ = build_node("
+        Not:
+          Unevaluated::
+            $Expression
+      ");
+    }
+
     | exp AND exp {
-      $$ = new_node("And");
-      add_child($$, add_child(new_node("First"), unevaluated_node($1)));
-      add_child($$, add_child(new_node("Second"), unevaluated_node($1)));
+      set_node("First", $1);
+      set_node("Second", $3);
+      $$ = build_node("
+        And:
+          First:
+            Unevaluated::
+              $First
+          Second:
+            Unevaluated::
+              $Second
+      ");
     }
-    | INCREMENT exp { $$ = add_child(new_node("Increment"), unevaluated_node($2)); }
-    | stmt SEMI exp { $$ = $1; if (!$$) $$ = $3; if ($1 && $3) { $1->next = $3; $3->previous = $1; } }
-    | MALLOC exp { $$ = add_child(new_node("Malloc"), unevaluated_node($2)); }
-    | REF exp { $$ = add_child(new_node("Reference"), $2); }
-    | STAR exp { $$ = add_child(new_node("Dereference"), unevaluated_node($2)); }
+
+    | INCREMENT exp {
+      set_node("Expression", $2);
+      $$ = build_node("
+        Increment:
+          Unevaluated::
+            $Expression
+      ");
+    }
+
+    | stmt SEMI exp {
+      set_node("Statement", $1);
+      set_node("Expression", $3);
+      $$ = build_node("
+        $Statement
+        $Expression
+      ");
+    }
+
+    | MALLOC exp {
+      set_node("Size", $2);
+      $$ = build_node("
+        Malloc:
+          Unevaluated::
+            $Size
+      ");
+    }
+
+    | REF VAR_ID {
+      set_node("Variable", $2);
+      $$ = build_node("
+        Reference:
+          $Variable
+      ");
+    }
+
+    | STAR exp {
+      set_node("Location", $2);
+      $$ = build_node("
+        Dereference:
+          Unevaluated::
+            $Location
+      ");
+    }
+
     | LAMBDA var_list DOT stmt {
-      $$ = new_node("LambdaAbstraction");
-      Node* vars = new_node("Vars");
-      vars->ordered = true;
-      add_child($$, add_child(vars, $2));
-      Node* body = new_node("Body");
-      body->ordered = true;
-      add_child($$, add_child(body, $4));
+      set_node("Vars", $2);
+      set_node("Body", $4);
+      $$ = build_node("
+        LambdaAbstraction:
+          Vars::
+            $Vars
+          Body::
+            $Body
+      ");
     }
+
     | exp LPAREN exp_list RPAREN {
-      $$ = new_node("Application");
-      add_child($$, unevaluated_node($1));
-      Node* arguments = new_node("Arguments");
-      arguments->ordered = true;
-      add_child($$, add_child(arguments, $3));
+      set_node("Function", $1);
+      set_node("Arguments", $3);
+      $$ = build_node("
+        Application:
+          Unevaluated::
+            $Function
+          Arguments::
+            $Arguments
+      ");
     }
+
     | MU VAR_ID DOT exp {
-      $$ = new_node("MuConstruct");
-      add_child($$, $2);
-      Node* body = new_node("Body");
-      body->ordered = true;
-      add_child($$, add_child(body, $4));
+      set_node("Var", $2);
+      set_node("Body", $4);
+      $$ = build_node("
+        MuConstruct:
+          $Var
+          Body::
+            $Body
+      ");
     }
-    | CALLCC exp { $$ = add_child(new_node("Callcc"), unevaluated_node($2)); }
-    | RANDOM_BOOL { $$ = new_node("RandomBool"); }
-    | NEW_AGENT stmt { $$ = add_child(new_node("NewAgent"), $2); $$->ordered = true; }
-    | ME { $$ = new_node("Me"); }
-    | PARENT { $$ = new_node("Parent"); }
-    | RECEIVE { $$ = new_node("Receive"); }
-    | RECEIVE_FROM exp { $$ = add_child(new_node("ReceiveFrom"), unevaluated_node($2)); }
+
+    | CALLCC exp {
+      set_node("Expression", $2);
+      $$ = build_node("
+        Callcc:
+          Unevaluated::
+            $Expression
+      ");
+    }
+
+    | RANDOM_BOOL { $$ = build_node("RandomBool:"); }
+
+    | NEW_AGENT stmt {
+      set_node("Statement", $2);
+      $$ = build_node("
+        NewAgent::
+          $Statement
+      ");
+    }
+
+    | ME { $$ = build_node("Me:"); }
+
+    | PARENT { $$ = build_node("Parent:"); }
+
+    | RECEIVE { $$ = build_node("Receive:"); }
+
+    | RECEIVE_FROM exp {
+      set_node("Agent", $2);
+      $$ = build_node("
+        ReceiveFrom:
+          Unevaluated::
+            $Agent
+      ");
+    }
+
     | QUOTE exp { $$ = NULL; }
     | UNQUOTE exp { $$ = NULL; }
     | EVAL exp { $$ = NULL; }
+
     | LPAREN exp RPAREN { $$ = $2; }
 
 var_list : VAR_ID
-         | var_list COMMA VAR_ID { $$->next = $3; $3->previous = $$; }
+         | var_list COMMA VAR_ID {
+           set_node("Vars", $1);
+           set_node("Var", $3);
+           $$ = build_node("
+             $Vars
+             $Var
+           ");
+         }
 
-exp_list : exp
-         | exp_list COMMA exp { $$->next = $3; $3->previous = $$; }
+exp_list : exp {
+           set_node("Expression", $1);
+           $$ = build_node("
+             Unevaluated::
+               $Expression
+           ");
+         }
+
+         | exp_list COMMA exp {
+           set_node("Expressions", $1);
+           set_node("Expression", $3);
+           $$ = build_node("
+             $Expressions
+             Unevaluated::
+               $Expression
+           ");
+         }
 %%
