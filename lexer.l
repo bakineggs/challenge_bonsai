@@ -2,7 +2,10 @@
   #include <stdlib.h>
   #include <string>
 
-  #include "types.h"
+  extern "C" {
+    #include "okk/node_builder.h"
+  }
+
   #include "parser.hpp"
 
   extern "C" int yywrap() { }
@@ -74,6 +77,6 @@ halt-system { return HALT_SYSTEM; }
 \r
 \x20
 
-. { exit(1); }
+. { printf("Lexer error: %s\n", yytext); exit(1); }
 
 %%
