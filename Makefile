@@ -26,7 +26,7 @@ lexer.cpp: lexer.l parser.hpp
 	lex -o $@ $^
 
 test: interpreter
-	sh test.sh
+	spec spec
 
 clean:
 	if [ -d okk ]; then cd okk; make clean; fi
