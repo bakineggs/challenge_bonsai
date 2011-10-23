@@ -15,6 +15,12 @@ describe 'output' do
       :stdout => "1.5\n",
       :stderr => ""
     }
+
+    run_program("output 1.0").should == {
+      :exit_status => 0,
+      :stdout => "1.0\n",
+      :stderr => ""
+    }
   end
 
   it 'outputs booleans' do
