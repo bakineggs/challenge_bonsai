@@ -18,7 +18,7 @@ false { set_integer("Value", 0); yylval.node = build_node("Bool: $Value"); retur
 
 -?[0-9]+ { set_integer("Value", atol(yytext)); yylval.node = build_node("Integer: $Value"); return VALUE; }
 
--?[0-9]+\.[0-9]+ { set_real("Value", atof(yytext)); yylval.node = build_node("Real: $Value"); return VALUE; }
+-?[0-9]+\.[0-9]+ { set_decimal("Value", atof(yytext)); yylval.node = build_node("Real: $Value"); return VALUE; }
 
 \+ { return PLUS; }
 \* { return STAR; } /* used for MUL and DEREF */
