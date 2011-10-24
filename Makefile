@@ -1,5 +1,5 @@
-interpreter: interpreter.c parser.o lexer.o okk/node_builder.o
-	g++ -o $@ $^
+interpreter: interpreter.c parser.o lexer.o
+	g++ -Wno-write-strings -o $@ $^
 
 interpreter.c: rules.okk
 	git submodule init
@@ -11,11 +11,6 @@ parser.o: parser.cpp
 
 lexer.o: lexer.cpp
 	g++ -Wno-write-strings -c -o $@ $^
-
-okk/node_builder.o: okk/node_builder.c
-	git submodule init
-	git submodule update
-	cd okk; make node_builder.o
 
 parser.cpp: parser.y
 	bison -d -o $@ $^
@@ -29,5 +24,4 @@ test: interpreter
 	spec spec
 
 clean:
-	if [ -d okk ]; then cd okk; make clean; fi
 	rm -f *.cpp *.hpp *.o interpreter interpreter.c
