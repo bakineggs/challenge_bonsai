@@ -1,10 +1,11 @@
 interpreter: interpreter.c parser.o lexer.o
 	g++ -Wno-write-strings -o $@ $^
 
-interpreter.c: rules.okk
+interpreter.c: rules.okk .git/index
 	git submodule init
 	git submodule update
-	cd okk; ruby compile.rb ../rules.okk > ../interpreter.c
+	cd okk; ruby compile.rb ../rules.okk > ../interpreter.c.tmp
+	mv interpreter.c.tmp interpreter.c
 
 parser.o: parser.cpp
 	g++ -Wno-write-strings -c -o $@ $^
@@ -24,4 +25,4 @@ test: interpreter
 	spec spec
 
 clean:
-	rm -f *.cpp *.hpp *.o interpreter interpreter.c
+	rm -f *.cpp *.hpp *.o interpreter*

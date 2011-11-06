@@ -3,5 +3,6 @@ lexer.o
 parser.cpp
 parser.hpp
 parser.o
+interpreter.c.tmp
 interpreter.c
 interpreter
