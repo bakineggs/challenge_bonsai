@@ -516,7 +516,7 @@ Ptr:
     Location: L
     Size: N
 -NextLoc: L
-+NextLoc: L + N
++NextLoc: < set_integer($$, $L->integer_value + $N->integer_value);
 
 +*: S
 Malloc:
