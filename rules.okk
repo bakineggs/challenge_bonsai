@@ -427,7 +427,8 @@ Env:
   -Entry:
     VarId: X
 
--Vars:=
+K:
+  -Vars:=
 
 # Side effects: increment
 Threads:
