@@ -54,25 +54,19 @@ stmt : { $$ = NULL; }
        ");
      }
 
-     | OPENBLOCK VARS var_list SEMI stmt CLOSEBLOCK {
-       set_node("Vars", $3);
-       set_node("Body", $5);
+     | VARS var_list {
+       set_node("Vars", $2);
        $$ = build_node("\
-         Block:\
-           Vars::\
-             $Vars\
-           Body::\
-             $Body\
+         Vars::\
+           $Vars\
        ");
      }
 
      | OPENBLOCK stmt CLOSEBLOCK {
        set_node("Body", $2);
        $$ = build_node("\
-         Block:\
-           Vars::\
-           Body::\
-             $Body\
+         Block::\
+           $Body\
        ");
      }
 
