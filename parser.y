@@ -57,7 +57,7 @@ stmt : { $$ = NULL; }
      | VARS var_list {
        set_node("Vars", $2);
        $$ = build_node("\
-         Vars::\
+         Vars:\
            $Vars\
        ");
      }

@@ -383,12 +383,10 @@ Store:
     Location: L
     Value: V
 
-# Statement Block with variable declaration
+# Statement Block
 K::
-  -BlockWithSavedEnv:
-    Vars:=
-    Body:=
-      *:* S
+  -BlockWithSavedEnv::=
+    *:* S
   +*: S
 
 K::
@@ -402,12 +400,12 @@ K::
 -Env:
 +Env: E
 
+# Variable declaration
 Threads:
   Thread:
     K::
-      BlockWithSavedEnv:
-        Vars:
-          -VarId: X
+      Vars:
+        -VarId: X
     Env:
       !Entry:
         VarId: X
@@ -423,12 +421,13 @@ Store:
 +NextLoc: < set_integer($$, $L->integer_value + 1);
 
 K::
-  BlockWithSavedEnv:
-    Vars:
-      VarId: X
+  Vars:
+    VarId: X
 Env:
   -Entry:
     VarId: X
+
+-Vars:=
 
 # Side effects: increment
 Threads:
