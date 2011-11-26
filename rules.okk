@@ -385,13 +385,9 @@ Store:
 
 # Statement Block
 K::
-  -BlockWithSavedEnv::=
+  -Block::=
     *:* S
   +*: S
-
-K::
-  -Block: B
-  +BlockWithSavedEnv: B
   +RestoreEnvironment: E
 Env: E
 
