@@ -21,7 +21,7 @@
       Agent:
         Threads:
           Thread:
-            K:: < yyparse(); add_child($$, computation);
+            K:: K
             Env:
             Holds:
         Store:
@@ -34,6 +34,8 @@
     Output::
     Messages:
     NextAgent: 1
+< yyparse();
+< add_child($K, computation);
 
 # Arithmetic
 -Addition:
@@ -42,7 +44,9 @@
   Value:
     Integer: B
 +Value:
-  Integer: < set_integer($$, $A->integer_value + $B->integer_value);
+  Integer: S
+< $S->value_type = integer;
+< $S->integer_value = $A->integer_value + $B->integer_value;
 
 -Addition:
   Value:
@@ -50,7 +54,9 @@
   Value:
     Real: B
 +Value:
-  Real: < set_decimal($$, $A->decimal_value + $B->decimal_value);
+  Real: S
+< $S->value_type = decimal;
+< $S->decimal_value = $A->decimal_value + $B->decimal_value;
 
 -Addition:
   Value:
@@ -58,7 +64,9 @@
   Value:
     Real: B
 +Value:
-  Real: < set_decimal($$, $A->integer_value + $B->decimal_value);
+  Real: S
+< $S->value_type = decimal;
+< $S->decimal_value = $A->integer_value + $B->decimal_value;
 
 +*: S
 Addition:
@@ -78,7 +86,9 @@ Addition:
   Value:
     Integer: B
 +Value:
-  Integer: < set_integer($$, $A->integer_value * $B->integer_value);
+  Integer: P
+< $P->value_type = integer;
+< $P->integer_value = $A->integer_value * $B->integer_value;
 
 -Multiplication:
   Value:
@@ -86,7 +96,9 @@ Addition:
   Value:
     Real: B
 +Value:
-  Real: < set_decimal($$, $A->decimal_value * $B->decimal_value);
+  Real: P
+< $P->value_type = decimal;
+< $P->decimal_value = $A->decimal_value * $B->decimal_value;
 
 -Multiplication:
   Value:
@@ -94,7 +106,9 @@ Addition:
   Value:
     Real: B
 +Value:
-  Real: < set_decimal($$, $A->integer_value * $B->decimal_value);
+  Real: P
+< $P->value_type = decimal;
+< $P->decimal_value = $A->integer_value * $B->decimal_value;
 
 +*: S
 Multiplication:
@@ -116,7 +130,9 @@ Multiplication:
     Value:
       Integer: B
 +Value:
-  Integer: < set_integer($$, $A->integer_value / $B->integer_value);
+  Integer: Q
+< $Q->value_type = integer;
+< $Q->integer_value = $A->integer_value / $B->integer_value;
 
 -Division:
   Dividend:
@@ -126,7 +142,9 @@ Multiplication:
     Value:
       Real: B
 +Value:
-  Real: < set_decimal($$, $A->decimal_value / $B->decimal_value);
+  Real: Q
+< $Q->value_type = decimal;
+< $Q->decimal_value = $A->decimal_value / $B->decimal_value;
 
 -Division:
   Dividend:
@@ -136,7 +154,9 @@ Multiplication:
     Value:
       Real: B
 +Value:
-  Real: < set_decimal($$, $A->integer_value / B->decimal_value);
+  Real: Q
+< $Q->value_type = decimal;
+< $Q->decimal_value = $A->integer_value / B->decimal_value;
 
 -Division:
   Dividend:
@@ -146,7 +166,9 @@ Multiplication:
     Value:
       Integer: B
 +Value:
-  Real: < set_decimal($$, $A->decimal_value / B->integer_value);
+  Real: Q
+< $Q->value_type = decimal;
+< $Q->decimal_value = $A->decimal_value / B->integer_value;
 
 +*: S
 Division:
@@ -186,8 +208,10 @@ Division:
   Larger:
     Value:
       Integer: B
-Value:
-  Bool: < set_integer($$, $A->integer_value <= B->integer_value ? 1 : 0);
++Value:
+  Bool: R
+< $R->value_type = integer;
+< $R->integer_value = $A->integer_value <= B->integer_value ? 1 : 0;
 
 -LessThanOrEqualTo:
   Smaller:
@@ -196,8 +220,10 @@ Value:
   Larger:
     Value:
       Real: B
-Value:
-  Bool: < set_integer($$, $A->decimal_value <= $B->decimal_value ? 1 : 0);
++Value:
+  Bool: R
+< $R->value_type = integer;
+< $R->integer_value = $A->decimal_value <= B->decimal_value ? 1 : 0;
 
 -LessThanOrEqualTo:
   Smaller:
@@ -206,8 +232,10 @@ Value:
   Larger:
     Value:
       Real: B
-Value:
-  Bool: < set_integer($$, $A->integer_value <= $B->decimal_value ? 1 : 0);
++Value:
+  Bool: R
+< $R->value_type = integer;
+< $R->integer_value = $A->integer_value <= B->decimal_value ? 1 : 0;
 
 -LessThanOrEqualTo:
   Smaller:
@@ -216,8 +244,10 @@ Value:
   Larger:
     Value:
       Integer: B
-Value:
-  Bool: < set_integer($$, $A->decimal_value <= $B->integer_value ? 1 : 0);
++Value:
+  Bool: R
+< $R->value_type = integer;
+< $R->integer_value = $A->decimal_value <= B->integer_value ? 1 : 0;
 
 +*: S
 LessThanOrEqualTo:
@@ -359,11 +389,13 @@ Output::=
 
 Output::
   -Value:
-    Integer: < printf("%d\n", $$->integer_value);
+    Integer: I
+< printf("%d\n", $I->integer_value);
 
 Output::
   -Value:
-    Real: < printf("%f\n", $$->decimal_value);
+    Real: R
+< printf("%f\n", $R->decimal_value);
 
 +*: S
 Output:
@@ -421,8 +453,8 @@ Store:
     Location: L
     Value:
       Integer: 0
--NextLoc: L
-+NextLoc: < set_integer($$, $L->integer_value + 1);
+NextLoc: L
+< $L->integer_value++;
 
 K::
   Vars:
@@ -441,7 +473,7 @@ Threads:
       -Increment:
         VarId: X
       +Value:
-        Integer: < set_integer($$, $I->integer_value + 1);
+        Integer: I2
     Env:
       Entry:
         VarId: X
@@ -450,8 +482,9 @@ Store:
   Entry:
     Location: L
     Value:
-      -Integer: I
-      +Integer: < set_integer($$, $I->integer_value + 1);
+      Integer: I
+< $I2->value_type = integer;
+< $I2->integer_value = $I->integer_value++;
 
 Threads:
   Thread:
@@ -459,7 +492,7 @@ Threads:
       -Increment:
         VarId: X
       +Value:
-        Real: < set_decimal($$, $R->decimal_value + 1);
+        Real: R2
     Env:
       Entry:
         VarId: X
@@ -468,8 +501,9 @@ Store:
   Entry:
     Location: L
     Value:
-      -Real: R
-      +Real: < set_decimal($$, $R->decimal_value + 1);
+      Real: R
+< $R2->value_type = decimal;
+< $R2->decimal_value = $R2->decimal_value++;
 
 # Obtaining the reference location of a name
 K::
@@ -519,8 +553,8 @@ Ptr:
   +Entry:
     Location: L
     Size: N
--NextLoc: L
-+NextLoc: < set_integer($$, $L->integer_value + $N->integer_value);
+NextLoc: L
+< $L->integer_value += $N->integer_value;
 
 +*: S
 Malloc:
@@ -679,8 +713,8 @@ Store:
   +Entry:
     Location: L
     Value: V
--NextLoc: L
-+NextLoc: < set_integer($$, $L->integer_value + 1);
+NextLoc: L
+< $L->integer_value++;
 
 K::
   Application:
@@ -765,8 +799,8 @@ Store:
       MuConstruct:
         VarId: X
         Body: B
--NextLoc: L
-+NextLoc: < set_integer($$, $L->integer_value + 1);
+NextLoc: L
+< $L->integer_value++;
 
 K::
   MuConstructWithSavedEnv:
@@ -963,8 +997,8 @@ Agents:
     Store:
     NextLoc: 0
     Aspect::
--NextAgent: N
-+NextAgent: < set_integer($$, $N->integer_value + 1);
+NextAgent: N
+< $N->integer_value++;
 
 -Agent:
   Threads:=
