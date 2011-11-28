@@ -357,6 +357,14 @@ Output::=
   *:*
   +Value: V
 
+Output::
+  -Value:
+    Integer: < printf("%d\n", $$->integer_value);
+
+Output::
+  -Value:
+    Real: < printf("%f\n", $$->decimal_value);
+
 +*: S
 Output:
   -Unevaluated::=
