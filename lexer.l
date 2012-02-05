@@ -1,14 +1,8 @@
 %{
-  #include <stdlib.h>
-  #include <string>
+  #include "okk/node_builder.h"
+  #include "parser.h"
 
-  extern "C" {
-    #include "okk/node_builder.h"
-  }
-
-  #include "parser.hpp"
-
-  extern "C" int yywrap() { }
+  extern int yywrap(void) { }
 %}
 
 %%
