@@ -1,7 +1,7 @@
-lexer.cpp
+lexer.c
 lexer.o
-parser.cpp
-parser.hpp
+parser.c
+parser.h
 parser.o
 interpreter.c.tmp
 interpreter.c
