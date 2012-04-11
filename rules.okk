@@ -1196,3 +1196,86 @@ SendSynch:
 +Agents:
 
 # Code Generation
+K::
+  -Quote:: Q
+  +Quoting::
+    HeatingQuote:: Q
+
+K::
+  -Quoting::=
+    Code: C
+  +Value:
+    Code: C
+
+Quoting::
+  *:*
+  -HeatingQuote::=
+    Unquote::=
+      *:* Q
+  +*: Q
+
+-HeatingQuote::=
++Code::
+
++HeatingQuote::
+  *: Q
+HeatingQuote::
+  -*: Q
+  *:
+
+Code::=
+  *:*
+  +*: Q
+-Code::=
+  *:* Q
+
+-HeatingQuote::=
+  *:= L
+    *:* S
++BoxedNode:
+  Label:
+    *: L
+  Body::
+    HeatingQuote::
+      *: S
+
+BoxedNode:
+  Label:
+    *:
+      -*:*
+
+BoxedNode:
+  -Label:=
+    *:= L
++UnboxingNode:
+  *: L
+
+BoxedNode:
+  !Label:
+  -Body::=
+    Code::=
+      *:* S
+UnboxingNode:
+  *:
+    +*: S
+
+-BoxedNode:
+  !Label:
+  !Body:
+-UnboxingNode:
+  *: S
++Code::
+  *: S
+
++*: S
+Eval:
+  -Unevaluated::=
+    -*:* S
+  +Evaluating:
+
+-Value:
+  Code::=
+    *:* S
+-Eval:
+  Evaluating:
++*: S

@@ -418,8 +418,9 @@ exp : VALUE {
     | EVAL exp {
       set_node("Exp", $2);
       $$ = build_node("\
-        Eval::\
-          $Exp\
+        Eval:\
+          Unevaluated::=\
+            $Exp\
       ");
     }
 
