@@ -399,9 +399,29 @@ exp : VALUE {
       ");
     }
 
-    | QUOTE exp { $$ = NULL; }
-    | UNQUOTE exp { $$ = NULL; }
-    | EVAL exp { $$ = NULL; }
+    | QUOTE exp {
+      set_node("Exp", $2);
+      $$ = build_node("\
+        Quote::\
+          $Exp\
+      ");
+    }
+
+    | UNQUOTE exp {
+      set_node("Exp", $2);
+      $$ = build_node("\
+        Unquote::\
+          $Exp\
+      ");
+    }
+
+    | EVAL exp {
+      set_node("Exp", $2);
+      $$ = build_node("\
+        Eval::\
+          $Exp\
+      ");
+    }
 
     | LPAREN exp RPAREN { $$ = $2; }
 
