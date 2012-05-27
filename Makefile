@@ -1,10 +1,10 @@
 interpreter: interpreter.c parser.o lexer.o
 	gcc -o $@ $^
 
-interpreter.c: rules.okk .git/index
+interpreter.c: rules.bonsai .git/index
 	git submodule init
 	git submodule update
-	cd okk; ruby compile.rb ../rules.okk > ../interpreter.c.tmp
+	cd bonsai; ruby compile.rb ../rules.bonsai > ../interpreter.c.tmp
 	mv interpreter.c.tmp interpreter.c
 
 parser.o: parser.c

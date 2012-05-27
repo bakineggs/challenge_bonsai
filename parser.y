@@ -1,6 +1,6 @@
 %{
   #include <stdio.h>
-  #include "okk/node_builder.h"
+  #include "bonsai/node_builder.h"
 
   extern int yylex();
   void yyerror(const char* error) { fprintf(stderr, "%s\n", error); }

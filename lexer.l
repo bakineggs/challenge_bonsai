@@ -1,5 +1,5 @@
 %{
-  #include "okk/node_builder.h"
+  #include "bonsai/node_builder.h"
   #include "parser.h"
 
   extern int yywrap(void) { }

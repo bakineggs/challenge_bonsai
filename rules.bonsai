@@ -7,7 +7,7 @@
 
 # Access our parser
 %{
-  #include "okk/types.h"
+  #include "bonsai/types.h"
 
   extern int yyparse();
   extern Node* computation;
