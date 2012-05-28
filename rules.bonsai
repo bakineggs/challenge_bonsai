@@ -156,7 +156,7 @@ Multiplication:
 +Value:
   Real: Q
 < $Q->value_type = decimal;
-< $Q->decimal_value = $A->integer_value / B->decimal_value;
+< $Q->decimal_value = $A->integer_value / $B->decimal_value;
 
 -Division:
   Dividend:
@@ -168,7 +168,7 @@ Multiplication:
 +Value:
   Real: Q
 < $Q->value_type = decimal;
-< $Q->decimal_value = $A->decimal_value / B->integer_value;
+< $Q->decimal_value = $A->decimal_value / $B->integer_value;
 
 +*: S
 Division:
@@ -211,7 +211,7 @@ Division:
 +Value:
   Bool: R
 < $R->value_type = integer;
-< $R->integer_value = $A->integer_value <= B->integer_value ? 1 : 0;
+< $R->integer_value = $A->integer_value <= $B->integer_value ? 1 : 0;
 
 -LessThanOrEqualTo:
   Smaller:
@@ -223,7 +223,7 @@ Division:
 +Value:
   Bool: R
 < $R->value_type = integer;
-< $R->integer_value = $A->decimal_value <= B->decimal_value ? 1 : 0;
+< $R->integer_value = $A->decimal_value <= $B->decimal_value ? 1 : 0;
 
 -LessThanOrEqualTo:
   Smaller:
@@ -235,7 +235,7 @@ Division:
 +Value:
   Bool: R
 < $R->value_type = integer;
-< $R->integer_value = $A->integer_value <= B->decimal_value ? 1 : 0;
+< $R->integer_value = $A->integer_value <= $B->decimal_value ? 1 : 0;
 
 -LessThanOrEqualTo:
   Smaller:
@@ -247,7 +247,7 @@ Division:
 +Value:
   Bool: R
 < $R->value_type = integer;
-< $R->integer_value = $A->decimal_value <= B->integer_value ? 1 : 0;
+< $R->integer_value = $A->decimal_value <= $B->integer_value ? 1 : 0;
 
 +*: S
 LessThanOrEqualTo:
@@ -390,7 +390,7 @@ Output::=
 Output::
   -Value:
     Integer: I
-< printf("%d\n", $I->integer_value);
+< printf("%ld\n", $I->integer_value);
 
 Output::
   -Value:
