@@ -22,7 +22,7 @@ lexer.c: lexer.l parser.h
 	flex -o $@ $^
 
 test: interpreter
-	spec spec
+	rspec spec
 
 clean:
 	rm -f lexer lexer.c lexer.o parser parser.h parser.c parser.o interpreter.c interpreter
