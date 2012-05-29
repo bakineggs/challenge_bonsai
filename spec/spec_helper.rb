@@ -16,7 +16,7 @@ def run_program program
 
   base = source.path.sub(/.challenge$/, '')
   interpreter = "#{File.dirname __FILE__}/../interpreter"
-  run_with_timeout "#{interpreter} #{source.path} > #{base}.stdout 2> #{base}.stderr"
+  run_with_timeout "#{interpreter} < #{source.path} > #{base}.stdout 2> #{base}.stderr"
 
   result = {:exit_status => $?.exitstatus}
   result[:stdout] = File.read "#{base}.stdout"
