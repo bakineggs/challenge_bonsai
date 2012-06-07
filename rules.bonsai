@@ -35,7 +35,7 @@
     Messages:
     NextAgent: 1
 < yyparse();
-< add_child($K, computation);
+< insert(computation, $K, NULL);
 
 # Arithmetic
 -Addition:
