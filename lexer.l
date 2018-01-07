@@ -1,5 +1,5 @@
 %{
-  #include "bonsai/node_builder.h"
+  #include "bonsai/implementations/c/node_builder.h"
   #include "parser.h"
 
   extern int yywrap(void) { }

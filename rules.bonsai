@@ -5,14 +5,6 @@
 # - bottom out store in free
 # - code generation
 
-# Access our parser
-%{
-  #include "bonsai/types.h"
-
-  extern int yyparse();
-  extern Node* computation;
-%}
-
 # Build Configuration
 ^:
   !T:
@@ -21,7 +13,8 @@
       Agent:
         Threads:
           Thread:
-            K:: K
+            K::
+              $K
             Env:
             Holds:
         Store:
@@ -34,345 +27,423 @@
     Output::
     Messages:
     NextAgent: 1
-< yyparse();
-< insert(computation, $K, NULL);
 
 # Arithmetic
--Addition:
-  Value:
-    Integer: A
-  Value:
-    Integer: B
-+Value:
-  Integer: S
-< $S->value_type = integer;
-< $S->integer_value = $A->integer_value + $B->integer_value;
-
--Addition:
-  Value:
-    Real: A
-  Value:
-    Real: B
-+Value:
-  Real: S
-< $S->value_type = decimal;
-< $S->decimal_value = $A->decimal_value + $B->decimal_value;
-
--Addition:
-  Value:
-    Integer: A
-  Value:
-    Real: B
-+Value:
-  Real: S
-< $S->value_type = decimal;
-< $S->decimal_value = $A->integer_value + $B->decimal_value;
-
-+*: S
-Addition:
-  -Unevaluated::=
-    *:* S
-  !Evaluating:
-  +Evaluating:
-
--Value: V
-Addition:
-  -Evaluating:
-  +Value: V
-
--Multiplication:
-  Value:
-    Integer: A
-  Value:
-    Integer: B
-+Value:
-  Integer: P
-< $P->value_type = integer;
-< $P->integer_value = $A->integer_value * $B->integer_value;
-
--Multiplication:
-  Value:
-    Real: A
-  Value:
-    Real: B
-+Value:
-  Real: P
-< $P->value_type = decimal;
-< $P->decimal_value = $A->decimal_value * $B->decimal_value;
-
--Multiplication:
-  Value:
-    Integer: A
-  Value:
-    Real: B
-+Value:
-  Real: P
-< $P->value_type = decimal;
-< $P->decimal_value = $A->integer_value * $B->decimal_value;
-
-+*: S
-Multiplication:
-  -Unevaluated::=
-    *:* S
-  !Evaluating:
-  +Evaluating:
-
--Value: V
-Multiplication:
-  -Evaluating:
-  +Value: V
-
--Division:
-  Dividend:
+K::
+  -Addition:
     Value:
       Integer: A
-  Divisor:
     Value:
       Integer: B
-+Value:
-  Integer: Q
-< $Q->value_type = integer;
-< $Q->integer_value = $A->integer_value / $B->integer_value;
+  +Value:
+    Integer: S
+$:
+  +:
+    Addend: A
+    Addend: B
+    Sum: S
 
--Division:
-  Dividend:
+K::
+  -Addition:
     Value:
       Real: A
-  Divisor:
     Value:
       Real: B
-+Value:
-  Real: Q
-< $Q->value_type = decimal;
-< $Q->decimal_value = $A->decimal_value / $B->decimal_value;
+  +Value:
+    Real: S
+$:
+  +:
+    Addend: A
+    Addend: B
+    Sum: S
 
--Division:
-  Dividend:
+K::
+  -Addition:
     Value:
       Integer: A
-  Divisor:
     Value:
       Real: B
-+Value:
-  Real: Q
-< $Q->value_type = decimal;
-< $Q->decimal_value = $A->integer_value / $B->decimal_value;
+  +Value:
+    Real: S
+$:
+  +:
+    Addend: A
+    Addend: B
+    Sum: S
 
--Division:
-  Dividend:
-    Value:
-      Real: A
-  Divisor:
-    Value:
-      Integer: B
-+Value:
-  Real: Q
-< $Q->value_type = decimal;
-< $Q->decimal_value = $A->decimal_value / $B->integer_value;
-
-+*: S
-Division:
-  Dividend:
+K::
+  +*:* [S]
+  Addition:
     -Unevaluated::=
-      *:* S
-    +Evaluating:
-  Divisor:
+      *:* [S]
     !Evaluating:
+    +Evaluating:
 
--Value: V
-Division:
-  Dividend:
+K::
+  -Value: V
+  Addition:
     -Evaluating:
     +Value: V
 
-+*: S
-Division:
-  Divisor:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
-  Dividend:
-    !Evaluating:
+K::
+  -Multiplication:
+    Value:
+      Integer: A
+    Value:
+      Integer: B
+  +Value:
+    Integer: P
+$:
+  *:
+    Factor: A
+    Factor: B
+    Product: P
 
--Value: V
-Division:
-  Divisor:
+K::
+  -Multiplication:
+    Value:
+      Real: A
+    Value:
+      Real: B
+  +Value:
+    Real: P
+$:
+  *:
+    Factor: A
+    Factor: B
+    Product: P
+
+K::
+  -Multiplication:
+    Value:
+      Integer: A
+    Value:
+      Real: B
+  +Value:
+    Real: P
+$:
+  *:
+    Factor: A
+    Factor: B
+    Product: P
+
+K::
+  +*:* [S]
+  Multiplication:
+    -Unevaluated::=
+      *:* [S]
+    !Evaluating:
+    +Evaluating:
+
+K::
+  -Value: V
+  Multiplication:
     -Evaluating:
     +Value: V
+
+K::
+  -Division:
+    Dividend:
+      Value:
+        Integer: A
+    Divisor:
+      Value:
+        Integer: B
+  +Value:
+    Integer: Q
+$:
+  /:
+    Dividend: A
+    Divisor: B
+    Quotient: Q
+
+K::
+  -Division:
+    Dividend:
+      Value:
+        Real: A
+    Divisor:
+      Value:
+        Real: B
+  +Value:
+    Real: Q
+$:
+  /:
+    Dividend: A
+    Divisor: B
+    Quotient: Q
+
+K::
+  -Division:
+    Dividend:
+      Value:
+        Integer: A
+    Divisor:
+      Value:
+        Real: B
+  +Value:
+    Real: Q
+$:
+  /:
+    Dividend: A
+    Divisor: B
+    Quotient: Q
+
+K::
+  -Division:
+    Dividend:
+      Value:
+        Real: A
+    Divisor:
+      Value:
+        Integer: B
+  +Value:
+    Real: Q
+$:
+  /:
+    Dividend: A
+    Divisor: B
+    Quotient: Q
+
+K::
+  +*:* [S]
+  Division:
+    Dividend:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+    Divisor:
+      !Evaluating:
+
+K::
+  -Value: V
+  Division:
+    Dividend:
+      -Evaluating:
+      +Value: V
+
+K::
+  +*:* [S]
+  Division:
+    Divisor:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+    Dividend:
+      !Evaluating:
+
+K::
+  -Value: V
+  Division:
+    Divisor:
+      -Evaluating:
+      +Value: V
 
 # Boolean Expressions
--LessThanOrEqualTo:
-  Smaller:
-    Value:
-      Integer: A
-  Larger:
-    Value:
-      Integer: B
-+Value:
-  Bool: R
-< $R->value_type = integer;
-< $R->integer_value = $A->integer_value <= $B->integer_value ? 1 : 0;
+K::
+  -LessThanOrEqualTo:
+    Left:
+      Value:
+        Integer: A
+    Right:
+      Value:
+        Integer: B
+  +Value:
+    Bool: R
+$:
+  <=:
+    Left: A
+    Right: B
+    Result: R
 
--LessThanOrEqualTo:
-  Smaller:
-    Value:
-      Real: A
-  Larger:
-    Value:
-      Real: B
-+Value:
-  Bool: R
-< $R->value_type = integer;
-< $R->integer_value = $A->decimal_value <= $B->decimal_value ? 1 : 0;
+K::
+  -LessThanOrEqualTo:
+    Left:
+      Value:
+        Real: A
+    Right:
+      Value:
+        Real: B
+  +Value:
+    Bool: R
+$:
+  <=:
+    Left: A
+    Right: B
+    Result: R
 
--LessThanOrEqualTo:
-  Smaller:
-    Value:
-      Integer: A
-  Larger:
-    Value:
-      Real: B
-+Value:
-  Bool: R
-< $R->value_type = integer;
-< $R->integer_value = $A->integer_value <= $B->decimal_value ? 1 : 0;
+K::
+  -LessThanOrEqualTo:
+    Left:
+      Value:
+        Integer: A
+    Right:
+      Value:
+        Real: B
+  +Value:
+    Bool: R
+$:
+  <=:
+    Left: A
+    Right: B
+    Result: R
 
--LessThanOrEqualTo:
-  Smaller:
-    Value:
-      Real: A
-  Larger:
-    Value:
-      Integer: B
-+Value:
-  Bool: R
-< $R->value_type = integer;
-< $R->integer_value = $A->decimal_value <= $B->integer_value ? 1 : 0;
+K::
+  -LessThanOrEqualTo:
+    Left:
+      Value:
+        Real: A
+    Right:
+      Value:
+        Integer: B
+  +Value:
+    Bool: R
+$:
+  <=:
+    Left: A
+    Right: B
+    Result: R
 
-+*: S
-LessThanOrEqualTo:
-  Smaller:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
+K::
+  +*:* [S]
+  LessThanOrEqualTo:
+    Left:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
 
--Value: V
-LessThanOrEqualTo:
-  Smaller:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  LessThanOrEqualTo:
+    Left:
+      -Evaluating:
+      +Value: V
 
-+*: S
-LessThanOrEqualTo:
-  Larger:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
-  Smaller:
-    Value:
+K::
+  +*:* [S]
+  LessThanOrEqualTo:
+    Right:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+    Left:
+      Value:
 
--Value: V
-LessThanOrEqualTo:
-  Larger:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  LessThanOrEqualTo:
+    Right:
+      -Evaluating:
+      +Value: V
 
--Not:
-  Value:
-    Bool: 1
-+Value:
-  Bool: 0
-
--Not:
-  Value:
-    Bool: 0
-+Value:
-  Bool: 1
-
-+*: S
-Not:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
-
--Value: V
-Not:
-  -Evaluating:
-  +Value: V
-
--And:
-  First:
+K::
+  -Not:
     Value:
       Bool: 1
-  Second:
-    Unevaluated::=
-      *:* S
-+*: S
+  +Value:
+    Bool: 0
 
--And:
-  First:
+K::
+  -Not:
     Value:
       Bool: 0
-+Value:
-  Bool: 0
+  +Value:
+    Bool: 1
 
-+*: S
-And:
-  First:
+K::
+  +*:* [S]
+  Not:
     -Unevaluated::=
-      *:* S
+      *:* [S]
     +Evaluating:
 
--Value: V
-And:
-  First:
+K::
+  -Value: V
+  Not:
     -Evaluating:
     +Value: V
+
+K::
+  -And:
+    First:
+      Value:
+        Bool: 1
+    Second:
+      Unevaluated::=
+        *:* [S]
+  +*:* [S]
+
+K::
+  -And:
+    First:
+      Value:
+        Bool: 0
+  +Value:
+    Bool: 0
+
+K::
+  +*:* [S]
+  And:
+    First:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+
+K::
+  -Value: V
+  And:
+    First:
+      -Evaluating:
+      +Value: V
 
 # If
--If:
-  Condition:
-    Value:
-      Bool: 1
-  Then::=
-    *:* S
-+*: S
+K::
+  -If:
+    Condition:
+      Value:
+        Bool: 1
+    Then::=
+      *:* [S]
+  +*:* [S]
 
--If:
-  Condition:
-    Value:
-      Bool: 0
-  Else::=
-    *:* S
-+*: S
+K::
+  -If:
+    Condition:
+      Value:
+        Bool: 0
+    Else::=
+      *:* [S]
+  +*:* [S]
 
-+*: S
-If:
-  Condition:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
+K::
+  +*:* [S]
+  If:
+    Condition:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
 
--Value: V
-If:
-  Condition:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  If:
+    Condition:
+      -Evaluating:
+      +Value: V
 
 # While
 K::
   -While:
     Condition: B
     Body::=
-      *:* S
+      *:* [S]
   +If:
     Condition: B
     Then::
-      *: S
+      *:* [S]
       While:
         Condition: B
         Body::
-          *: S
+          *:* [S]
     Else::
 
 # Output
@@ -387,33 +458,44 @@ Output::=
   *:*
   +Value: V
 
-Output::
+Output::=
   -Value:
     Integer: I
-< printf("%ld\n", $I->integer_value);
+  *:*
+$:
+  Stdout::
+    Value: I
+    Value: "\n"
 
-Output::
+Output::=
   -Value:
     Real: R
-< printf("%f\n", $R->decimal_value);
+  *:*
+$:
+  Stdout::
+    Value: R
+    Value: "\n"
 
-+*: S
-Output:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Output:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Output:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Output:
+    -Evaluating:
+    +Value: V
 
 # Reading from the store
 Threads:
   Thread:
-    K::
+    K::=
       -VarId: X
       +Value: V
+      *:*
     Env:
       Entry:
         VarId: X
@@ -424,24 +506,28 @@ Store:
     Value: V
 
 # Statement Block
-K::
+K::=
   -Block::=
-    *:* S
-  +*: S
+    *:* [S]
+  +*:* [S]
   +RestoreEnvironment: E
+  *:*
 Env: E
 
-K::
+K::=
   -RestoreEnvironment: E
+  *:*
 -Env:
 +Env: E
 
 # Variable declaration
 Threads:
   Thread:
-    K::
-      Vars:
+    K::=
+      Vars::=
         -VarId: X
+        VarId:*
+      *:*
     Env:
       !Entry:
         VarId: X
@@ -453,27 +539,36 @@ Store:
     Location: L
     Value:
       Integer: 0
-NextLoc: L
-< $L->integer_value++;
+-NextLoc: L
++NextLoc: N
+$:
+  +:
+    Addend: L
+    Addend: 1
+    Sum: N
 
-K::
-  Vars:
+K::=
+  Vars::=
     VarId: X
+    VarId:*
+  *:*
 Env:
   -Entry:
     VarId: X
 
-K:
-  -Vars:=
+K::=
+  -Vars::=
+  *:*
 
 # Side effects: increment
 Threads:
   Thread:
-    K::
+    K::=
       -Increment:
         VarId: X
       +Value:
-        Integer: I2
+        Integer: I
+      *:*
     Env:
       Entry:
         VarId: X
@@ -482,17 +577,22 @@ Store:
   Entry:
     Location: L
     Value:
-      Integer: I
-< $I2->value_type = integer;
-< $I2->integer_value = $I->integer_value++;
+      -Integer: I
+      +Integer: I2
+$:
+  +:
+    Addend: I
+    Addend: 1
+    Sum: I2
 
 Threads:
   Thread:
-    K::
+    K::=
       -Increment:
         VarId: X
       +Value:
-        Real: R2
+        Real: R
+      *:*
     Env:
       Entry:
         VarId: X
@@ -501,16 +601,21 @@ Store:
   Entry:
     Location: L
     Value:
-      Real: R
-< $R2->value_type = decimal;
-< $R2->decimal_value = $R2->decimal_value++;
+      -Real: R
+      +Real: R2
+$:
+  +:
+    Addend: R
+    Addend: 1
+    Sum: R2
 
 # Obtaining the reference location of a name
-K::
+K::=
   -Reference:
     VarId: X
   +Value:
     Integer: L
+  *:*
 Env:
   Entry:
     VarId: X
@@ -519,83 +624,98 @@ Env:
 # Dereferencing a location
 Threads:
   Thread:
-    K::
+    K::=
       -Dereference:
         Value:
           Integer: L
       +Value: V
+      *:*
 Store:
   Entry:
     Location: L
     Value: V
 
-+*: S
-Dereference:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Dereference:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Dereference:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Dereference:
+    -Evaluating:
+    +Value: V
 
 # Memory allocation (TODO: zero out the store)
 Threads:
   Thread:
-    K::
+    K::=
       -Malloc:
         Value:
           Integer: N
       +Value:
         Integer: L
+      *:*
 Ptr:
   +Entry:
     Location: L
     Size: N
-NextLoc: L
-< $L->integer_value += $N->integer_value;
+-NextLoc: L
++NextLoc: L2
+$:
+  +:
+    Addend: L
+    Addend: N
+    Sum: L2
 
-+*: S
-Malloc:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Malloc:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Malloc:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Malloc:
+    -Evaluating:
+    +Value: V
 
 # Free (TODO: bottom out the store)
 Threads:
   Thread:
-    K::
+    K::=
       -Free:
         Value:
           Integer: L
+      *:*
 Ptr:
   -Entry:
     Location: L
 
-+*: S
-Free:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Free:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Free:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Free:
+    -Evaluating:
+    +Value: V
 
 # Assignment
 Threads:
   Thread:
-    K::
+    K::=
       -Assignment:
         VarId: X
         Value: V
+      *:*
     Env:
       Entry:
         VarId: X
@@ -606,103 +726,114 @@ Store:
     -Value:
     +Value: V
 
-+*: S
-Assignment:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Assignment:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Assignment:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Assignment:
+    -Evaluating:
+    +Value: V
 
 # Dereferencing Assignment
 Threads:
   Thread:
-    K::
+    K::=
       -Assignment:
         Dereference:
           Value:
             Integer: L
         Value: V
+      *:*
 Store:
   Entry:
     Location: L
     -Value:
     +Value: V
 
-+*: S
-Assignment:
-  Value:
-  Dereference:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
+K::
+  +*:* [S]
+  Assignment:
+    Value:
+    Dereference:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
 
--Value: V
-Assignment:
-  Dereference:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  Assignment:
+    Dereference:
+      -Evaluating:
+      +Value: V
 
 # Declare aspect
 Threads:
   Thread:
-    K::
+    K::=
       -Aspect::=
-        *:* S
+        *:* [S]
+      *:*
 Aspect::=
   -*:*
-  +*: S
+  +*:* [S]
 
 # Bind aspect to function
 Threads:
   Thread:
-    K::
+    K::=
       -LambdaAbstraction:
         Vars: V
         Body::=
-          *:* B
+          *:* [B]
       +Value:
         Closure:
           Vars: V
           Body::
-            *: S
-            *: B
+            *:* [S]
+            *:* [B]
           Env: E
+      *:*
     Env: E
 Aspect::=
-  *:* S
+  *:* [S]
 
 # Function application
--Application:
-  ClosureWithSavedEnv:
-    Vars:=
-    Body::=
-      *:* S
-  Arguments:=
-  EvaluatedArguments:=
-+*: S
+K::=
+  -Application:
+    ClosureWithSavedEnv:
+      Vars:=
+      Body::=
+        *:* [S]
+    Arguments::=
+    EvaluatedArguments::=
+  +*:* [S]
+  *:*
 
-K::
+K::=
   Application:
     -Value:
       Closure: C
     +ClosureWithSavedEnv: C
   +RestoreEnvironment: E
+  *:*
 Env: E
 
 Threads:
   Thread:
-    K::
+    K::=
       Application:
         ClosureWithSavedEnv:
           Vars::
             -VarId: X
-        Arguments:=
+        Arguments::=
         EvaluatedArguments::
           -Value: V
+      *:*
     Env:
       !Entry:
         VarId: X
@@ -713,15 +844,21 @@ Store:
   +Entry:
     Location: L
     Value: V
-NextLoc: L
-< $L->integer_value++;
+-NextLoc: L
++NextLoc: N
+$:
+  +:
+    Addend: L
+    Addend: 1
+    Sum: N
 
-K::
+K::=
   Application:
     ClosureWithSavedEnv:
       Vars:
         VarId: X
-    Arguments:=
+    Arguments::=
+  *:*
 Env:
   -Entry:
     VarId: X
@@ -730,33 +867,39 @@ Application:
   !EvaluatedArguments::
   +EvaluatedArguments::
 
-+*: S
-Application:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
-
--Value: V
-Application:
-  -Evaluating:
-  +Value: V
-
-+*: S
-Application:
-  !Unevaluated:
-  !Evaluating:
-  Arguments::
+K::
+  +*:* [S]
+  Application:
     -Unevaluated::=
-      *:* S
+      *:* [S]
     +Evaluating:
 
--Value: V
-Application:
-  Arguments::
+K::
+  -Value: V
+  Application:
     -Evaluating:
-  EvaluatedArguments::=
-    *:*
     +Value: V
+
+K::
+  +*:* [S]
+  Application:
+    !Unevaluated::
+    !Evaluating:
+    Arguments::=
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+      *:*
+
+K::
+  -Value: V
+  Application:
+    Arguments::=
+      -Evaluating:
+      *:*
+    EvaluatedArguments::=
+      *:*
+      +Value: V
 
 # Tail call optimization
 K::
@@ -766,26 +909,28 @@ K::
 # Recursion
 Threads:
   Thread:
-    K::
+    K::=
       -MuConstructWithSavedEnv:
         !VarId:
         Body:
-          *:* S
-      +*: S
+          *:* [S]
+      +*:* [S]
 
-K::
+K::=
   -Value:
     MuConstruct: M
   +MuConstructWithSavedEnv: M
   +RestoreEnvironment: E
+  *:*
 Env: E
 
 Threads:
   Thread:
-    K::
+    K::=
       MuConstructWithSavedEnv:
         -VarId: X
         Body: B
+      *:*
     Env:
       !Entry:
         VarId: X
@@ -799,12 +944,18 @@ Store:
       MuConstruct:
         VarId: X
         Body: B
-NextLoc: L
-< $L->integer_value++;
+-NextLoc: L
++NextLoc: N
+$:
+  +:
+    Addend: L
+    Addend: 1
+    Sum: N
 
-K::
+K::=
   MuConstructWithSavedEnv:
     VarId: X
+  *:*
 Env:
   -Entry:
     VarId: X
@@ -819,57 +970,74 @@ K::=
       Value:
         Cc:
           Continuation::
-            *: K
+            *:* [K]
           Env: E
-  *:* K
+  *:* [K]
 Env: E
 
-+*: S
-Callcc:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Callcc:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Callcc:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Callcc:
+    -Evaluating:
+    +Value: V
 
 K::=
   -Application:
     Value:
       Cc:
-        Continuation::
-          *:* K
+        Continuation::=
+          *:* [K]
         Env: E
     Arguments::=
       Value: V
   -*:*
   +Value: V
-  +*: K
+  +*:* [K]
 -Env:
 +Env: E
 
 # Sequential Non-determinism
-K::
+K::=
   -RandomBool:
   +Value:
     Bool: 1
+  *:*
 
-K::
+K::=
   -RandomBool:
   +Value:
     Bool: 0
+  *:*
+
+# Stochastic Non-determinism
+K::=
+  -RandomBool:
+  +Value:
+    Bool: B
+  *:*
+$:
+  Random: R
+  <:
+    Left: R
+    Right: 0.5
+    Result: B
 
 # Threads
 Thread:
   K::
     -Spawn::=
-      *:* S
+      *:* [S]
   Env: E
 +Thread:
   K::
-    *: S
+    *:* [S]
   Env: E
   Holds:
 
@@ -887,9 +1055,10 @@ Busy:
   -Value: V
 
 # Thread Synchronization
-K::
+K::=
   -Acquire:
     Value: V
+  *:*
 Holds:
   Entry:
     Value: V
@@ -898,9 +1067,10 @@ Holds:
 
 Threads:
   Thread:
-    K::
+    K::=
       -Acquire:
         Value: V
+      *:*
     Holds:
       +Entry:
         Value: V
@@ -909,20 +1079,23 @@ Busy:
   !Value: V
   +Value: V
 
-+*: S
-Acquire:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
-
--Value: V
-Acquire:
-  -Evaluating:
-  +Value: V
+K::
+  +*:* [S]
+  Acquire:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
 K::
+  -Value: V
+  Acquire:
+    -Evaluating:
+    +Value: V
+
+K::=
   -Release:
     Value: V
+  *:*
 Holds:
   Entry:
     Value: V
@@ -931,9 +1104,10 @@ Holds:
 
 Threads:
   Thread:
-    K::
+    K::=
       -Release:
         Value: V
+      *:*
     Holds:
       -Entry:
         Value: V
@@ -941,54 +1115,61 @@ Threads:
 Busy:
   -Value: V
 
-+*: S
-Release:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Release:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Release:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Release:
+    -Evaluating:
+    +Value: V
 
 # Rendez-vous synchronization
 Thread:
-  K::
+  K::=
     -Rendezvous:
       Value: V
+    *:*
 Thread:
-  K::
+  K::=
     -Rendezvous:
       Value: V
+    *:*
 
-+*: S
-Rendezvous:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  Rendezvous:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-Rendezvous:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  Rendezvous:
+    -Evaluating:
+    +Value: V
 
 # Agents
 Agents:
   Agent:
     Threads:
       Thread:
-        K::
+        K::=
           -NewAgent::
-            *:* S
+            *:* [S]
           +Value:
             Integer: N
+          *:*
     Me: M
   +Agent:
     Threads:
       Thread:
         K::
-          *: S
+          *:* [S]
         Env:
         Holds:
     Busy:
@@ -997,8 +1178,13 @@ Agents:
     Store:
     NextLoc: 0
     Aspect::
-NextAgent: N
-< $N->integer_value++;
+-NextAgent: N
++NextAgent: N2
+$:
+  +:
+    Addend: N
+    Addend: 1
+    Sum: N2
 
 -Agent:
   Threads:=
@@ -1023,13 +1209,14 @@ Agents:
   Agent:
     Threads:
       Thread:
-        K::
+        K::=
           -SendAsynch:
             Receiver:
               Value:
                 Integer: N
             Message:
               Value: V
+          *:*
     Me: M
 Messages:
   +Entry:
@@ -1037,45 +1224,50 @@ Messages:
     Receiver: N
     Value: V
 
-+*: S
-SendAsynch:
-  Receiver:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
-  Message:
-    !Evaluating:
+K::
+  +*:* [S]
+  SendAsynch:
+    Receiver:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+    Message:
+      !Evaluating:
 
--Value: V
-SendAsynch:
-  Receiver:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  SendAsynch:
+    Receiver:
+      -Evaluating:
+      +Value: V
 
-+*: S
-SendAsynch:
-  Message:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
-  Receiver:
-    !Evaluating:
+K::
+  +*:* [S]
+  SendAsynch:
+    Message:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+    Receiver:
+      !Evaluating:
 
--Value: V
-SendAsynch:
-  Message:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  SendAsynch:
+    Message:
+      -Evaluating:
+      +Value: V
 
 Agents:
   Agent:
     Threads:
       Thread:
-        K::
+        K::=
           -ReceiveFrom:
             Value:
               Integer: N
           +Value: V
+          *:*
     Me: M
 Messages:
   -Entry:
@@ -1083,24 +1275,27 @@ Messages:
     Receiver: M
     Value: V
 
-+*: S
-ReceiveFrom:
-  -Unevaluated::=
-    *:* S
-  +Evaluating:
+K::
+  +*:* [S]
+  ReceiveFrom:
+    -Unevaluated::=
+      *:* [S]
+    +Evaluating:
 
--Value: V
-ReceiveFrom:
-  -Evaluating:
-  +Value: V
+K::
+  -Value: V
+  ReceiveFrom:
+    -Evaluating:
+    +Value: V
 
 Agents:
   Agent:
     Threads:
       Thread:
-        K::
+        K::=
           -Receive:
           +Value: V
+          *:*
     Me: M
 Messages:
   -Entry:
@@ -1110,124 +1305,140 @@ Messages:
 Agent:
   Threads:
     Thread:
-      K::
+      K::=
         -SendSynch:
           Receiver:
             Value:
               Integer: N
           Message:
             Value: V
+        *:*
   Me: M
 Agent:
   Threads:
     Thread:
-      K::
+      K::=
         -ReceiveFrom:
           Value:
             Integer: M
         +Value: V
+        *:*
   Me: N
 
 Agent:
   Threads:
     Thread:
-      K::
+      K::=
         -SendSynch:
           Receiver:
             Value:
               Integer: N
           Message:
             Value: V
+        *:*
 Agent:
   Threads:
     Thread:
-      K::
+      K::=
         -Receive:
         +Value: V
+        *:*
   Me: N
 
-+*: S
-SendSynch:
-  Receiver:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
-  Message:
-    !Evaluating:
+K::
+  +*:* [S]
+  SendSynch:
+    Receiver:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+    Message:
+      !Evaluating:
 
--Value: V
-SendSynch:
-  Receiver:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  SendSynch:
+    Receiver:
+      -Evaluating:
+      +Value: V
 
-+*: S
-SendSynch:
-  Message:
-    -Unevaluated::=
-      *:* S
-    +Evaluating:
-  Receiver:
-    !Evaluating:
+K::
+  +*:* [S]
+  SendSynch:
+    Message:
+      -Unevaluated::=
+        *:* [S]
+      +Evaluating:
+    Receiver:
+      !Evaluating:
 
--Value: V
-SendSynch:
-  Message:
-    -Evaluating:
-    +Value: V
+K::
+  -Value: V
+  SendSynch:
+    Message:
+      -Evaluating:
+      +Value: V
 
 # Abrupt Termination
--K::
+-K::=
   HaltThread:
+  *:*
 +K::
 
 -Threads:
   Thread:
-    K::
+    K::=
       HaltAgent:
+      *:*
 +Threads:
 
 -Agents:
   Agent:
     Threads:
       Thread:
-        K::
+        K::=
           HaltSystem:
+          *:*
 +Agents:
 
 # Code Generation
-K::
+K::=
   -Quote:: Q
   +Quoting::
     HeatingQuote:: Q
+  *:*
 
-K::
+K::=
   -Quoting::=
     Code: C
   +Value:
     Code: C
+  *:*
 
 Quoting::
-  *:*
   -HeatingQuote::=
     Unquote::=
-      *:* Q
-  +*: Q
+      *:* [Q]
+  +*:* [Q]
 
--HeatingQuote::=
-+Code::
+Quoting::
+  -HeatingQuote::=
+  +Code::
 
-+HeatingQuote::
-  *: Q
-HeatingQuote::
-  -*: Q
-  *:
+Quoting::
+  +HeatingQuote::
+    *: Q
+  HeatingQuote::=
+    -*: Q
+    *:
+    *:*
 
-Code::=
-  *:*
-  +*: Q
--Code::=
-  *:* Q
+Quoting::
+  Code::=
+    *:*
+    +*:* [Q]
+  -Code::=
+    *:* [Q]
 
 -HeatingQuote::=
   *:= L

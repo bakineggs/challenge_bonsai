@@ -1,11 +1,11 @@
-interpreter: interpreter.c parser.o lexer.o
-	gcc -o $@ $^
+node_builder.o: bonsai/implementations/c/node_builder.c
+	gcc -c -o $@ $^
 
-interpreter.c: rules.bonsai .git/index
-	git submodule init
-	git submodule update
-	cd bonsai; ruby compile.rb ../rules.bonsai > ../interpreter.c.tmp
-	mv interpreter.c.tmp interpreter.c
+print.o: bonsai/implementations/c/print.c
+	gcc -c -o $@ $^
+
+parser: parser.c lexer.o node_builder.o print.o
+	gcc -o $@ $^
 
 parser.o: parser.c
 	gcc -c -o $@ $^
@@ -21,8 +21,5 @@ parser.h: parser.c
 lexer.c: lexer.l parser.h
 	flex -o $@ $^
 
-test: interpreter
-	rspec spec
-
 clean:
-	rm -f lexer lexer.c lexer.o parser parser.h parser.c parser.o interpreter.c interpreter
+	rm -f lexer.c lexer.o parser parser.h parser.c parser.o node_builder.o print.o
