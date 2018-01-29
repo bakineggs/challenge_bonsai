@@ -484,6 +484,22 @@ $:
     Value: R
     Value: "\n"
 
+Output::=
+  -Value:
+    Bool: 0
+  *:*
+$:
+  Stdout::
+    Value: "false\n"
+
+Output::=
+  -Value:
+    Bool: 1
+  *:*
+$:
+  Stdout::
+    Value: "true\n"
+
 K::
   +*:* [S]
   Output:
