@@ -1027,19 +1027,6 @@ K::=
 -Env:
 +Env: E
 
-# Sequential Non-determinism
-K::=
-  -RandomBool:
-  +Value:
-    Bool: 1
-  *:*
-
-K::=
-  -RandomBool:
-  +Value:
-    Bool: 0
-  *:*
-
 # Stochastic Non-determinism
 K::=
   -RandomBool:
