@@ -28,6 +28,14 @@
     Messages:
     NextAgent: 1
 
+# Exit when all agents are done
+^:
+  T:
+    Agents:=
+    Output::=
+$:
+  Exit: 0
+
 # Arithmetic
 K::
   -Addition:
