@@ -294,12 +294,11 @@ exp : VALUE {
       ");
     }
 
-    | INCREMENT exp {
-      set_node("Expression", $2);
+    | INCREMENT VAR_ID {
+      set_node("VarId", $2);
       $$ = build_node("\
         Increment:\n\
-          Unevaluated::\n\
-            $Expression\n\
+          $VarId\n\
       ");
     }
 
