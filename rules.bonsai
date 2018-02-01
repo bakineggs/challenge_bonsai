@@ -1492,7 +1492,7 @@ UnboxingNode:
 +*: S
 Eval:
   -Unevaluated::=
-    -*:* S
+    *:* S
   +Evaluating:
 
 -Value:
