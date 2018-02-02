@@ -552,7 +552,7 @@ Threads:
       -Increment:
         VarId: X
       +Value:
-        Integer: I
+        Integer: I2
       *:.*
     Env:
       Entry:
@@ -576,7 +576,7 @@ Threads:
       -Increment:
         VarId: X
       +Value:
-        Real: R
+        Real: R2
       *:.*
     Env:
       Entry:
