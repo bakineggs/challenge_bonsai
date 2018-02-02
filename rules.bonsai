@@ -1,7 +1,6 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
 # TODO:
-# - zero out store in malloc
 # - bottom out store in free
 # - code generation
 
@@ -633,15 +632,24 @@ K::
     -Evaluating:
     +Value: V
 
-# Memory allocation (TODO: zero out the store)
+# Memory allocation
+-Malloc:
+  Value:
+    Integer: N
+  Zeroing: N
+  Location: L
++Value:
+  Integer: L
+
 Threads:
   Thread:
     K::=
-      -Malloc:
+      Malloc:
         Value:
           Integer: N
-      +Value:
-        Integer: L
+        !Location:
+        +Location: L
+        +Zeroing: 0
       *:.*
 Ptr:
   +Entry:
@@ -654,6 +662,33 @@ $:
     Addend: L
     Addend: N
     Sum: L2
+
+Threads:
+  Thread:
+    K::
+      Malloc:
+        Value:
+          Integer: M
+        Location: L
+        -Zeroing: N
+        +Zeroing: N2
+Store:
+  +Entry:
+    Location: L2
+    Value: 0
+$:
+  +:
+    Addend: L
+    Addend: N
+    Sum: L2
+  <:
+    Left: N
+    Right: M
+    Result: 1
+  +:
+    Addend: N
+    Addend: 1
+    Sum: N2
 
 +*:.* [S]
 Malloc:
