@@ -1,7 +1,6 @@
 # Translated from section 5.7.3 of http://fsl.cs.uiuc.edu/images/0/0c/CS422-Spring-2010-CHALLENGE.pdf
 
 # TODO:
-# - bottom out store in free
 # - code generation
 
 # Build Configuration
@@ -701,17 +700,59 @@ Malloc:
   -Evaluating:
   +Value: V
 
-# Free (TODO: bottom out the store)
+# Free
 Threads:
   Thread:
-    K::=
+    K::
       -Free:
         Value:
           Integer: L
-      *:.*
+        Size: N
+        Bottoming: N
 Ptr:
   -Entry:
     Location: L
+
+Threads:
+  Thread:
+    K::=
+      Free:
+        Value:
+          Integer: L
+        !Size:
+        +Size: N
+        +Bottoming: 0
+      *:.*
+Ptr:
+  Entry:
+    Location: L
+    Size: N
+
+Threads:
+  Thread:
+    K::
+      Free:
+        Value:
+          Integer: L
+        Size: M
+        -Bottoming: N
+        +Bottoming: N2
+Store:
+  -Entry:
+    Location: L2
+$:
+  +:
+    Addend: L
+    Addend: N
+    Sum: L2
+  <:
+    Left: N
+    Right: M
+    Result: 1
+  +:
+    Addend: N
+    Addend: 1
+    Sum: N2
 
 +*:.* [S]
 Free:
