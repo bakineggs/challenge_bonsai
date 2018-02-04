@@ -16,7 +16,7 @@
             Env:
             Holds:
         Store:
-        Aspect:
+        Aspect::
         Busy:
         Ptr:
         NextLoc: 0
