@@ -340,7 +340,7 @@ exp : VALUE {
       ");
     }
 
-    | LAMBDA var_list DOT stmt {
+    | LAMBDA var_list DOT exp {
       set_node("Vars", $2);
       set_node("Body", $4);
       $$ = build_node("\
