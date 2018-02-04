@@ -498,6 +498,7 @@ K::=
 Env: E
 
 K::=
+  Value:*
   -RestoreEnvironment: E
   *:.*
 -Env:
