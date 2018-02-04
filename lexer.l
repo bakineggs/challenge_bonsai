@@ -61,6 +61,7 @@ send-synch { return SEND_SYNCH; }
 halt-thread { return HALT_THREAD; }
 halt-agent { return HALT_AGENT; }
 halt-system { return HALT_SYSTEM; }
+return { return RETURN; }
 
 [a-zA-Z][a-zA-Z0-9_-]* { set_string("VarId", yytext); yylval.node = build_node("VarId: $VarId"); return VAR_ID; }
 

@@ -951,6 +951,28 @@ Application:
     *:.*
     +Value: V
 
++*:.* [S]
+Return:
+  -Unevaluated::=
+    *:.* [S]
+  +Evaluating:
+
+-Value: V
+Return:
+  -Evaluating:
+  +Value: V
+
+-K::=
+  Return:
+    Value: V
+  !RestoreEnvironment:*
+  RestoreEnvironment: R
+  *:.* [S]
++K::
+  Value: V
+  RestoreEnvironment: R
+  *:.* [S]
+
 # Tail call optimization
 -RestoreEnvironment:
 RestoreEnvironment:

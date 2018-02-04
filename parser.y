@@ -22,7 +22,7 @@
 %token RANDOM_BOOL NEW_AGENT ME PARENT RECEIVE RECEIVE_FROM QUOTE UNQUOTE EVAL
 %token VARS IF THEN ELSE WHILE DO OUTPUT ASSIGN ASPECT SPAWN ACQUIRE FREE RELEASE
 %token RENDEZVOUS SEND_ASYNCH SEND_SYNCH HALT_THREAD HALT_AGENT HALT_SYSTEM COMMA
-%token OPENBLOCK CLOSEBLOCK LPAREN RPAREN
+%token OPENBLOCK CLOSEBLOCK LPAREN RPAREN RETURN
 
 %union {
   Node* node;
@@ -209,6 +209,15 @@ stmt : { $$ = NULL; }
 
      | HALT_SYSTEM { $$ = build_node("HaltSystem:"); }
 
+     | RETURN exp {
+       set_node("ReturnValue", $2);
+       $$ = build_node("\
+         Return:\n\
+           Unevaluated::\n\
+             $ReturnValue\n\
+       ");
+     }
+
 exp : VALUE {
       set_node("Value", $1);
       $$ = build_node("\
@@ -340,7 +349,7 @@ exp : VALUE {
       ");
     }
 
-    | LAMBDA var_list DOT exp {
+    | LAMBDA var_list DOT stmt {
       set_node("Vars", $2);
       set_node("Body", $4);
       $$ = build_node("\
